@@ -13,7 +13,7 @@ export default function Goals() {
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
-      <header className="mb-6 mt-4 flex items-center justify-between">
+      <header className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Budget Bulan Ini</h1>
       </header>
 

@@ -7,7 +7,7 @@ export default function Profile() {
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
-      <header className="mb-8 mt-4">
+      <header className="mb-8">
         <h1 className="text-2xl font-semibold">Profil</h1>
       </header>
 

@@ -12,18 +12,18 @@ export default function Transactions() {
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
-      <header className="mb-6 mt-4 flex items-center justify-between">
+      <header className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Transaksi</h1>
       </header>
 
-      <div className="flex gap-3 mb-8">
+      <div className="flex gap-3 mb-4">
         <Button onClick={() => setIsTxModalOpen(true)} className="flex-1 flex items-center justify-center gap-2">
-          <Plus size={18} />
-          <span>Tambah</span>
+          <Plus size={18} strokeWidth={2.5} />
+          <span>Transaksi</span>
         </Button>
         <Button onClick={() => setIsCategoryModalOpen(true)} className="flex-1 flex items-center justify-center gap-2">
           <Tags size={18} />
-          <span>Kategori</span>
+          <span>Atur Kategori</span>
         </Button>
       </div>
 

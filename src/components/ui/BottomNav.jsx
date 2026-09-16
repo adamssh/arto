@@ -11,8 +11,8 @@ export default function BottomNav() {
   ];
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-surface/80 backdrop-blur-md border-t border-white/50 pb-4 pt-2 px-6 z-40">
-      <nav className="flex justify-between items-center max-w-md mx-auto h-16">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-surface/80 backdrop-blur-md border-t border-white/50 pb-2.5 pt-1.5 px-6 z-40">
+      <nav className="flex justify-between items-center max-w-md mx-auto h-[52px]">
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -27,7 +27,7 @@ export default function BottomNav() {
             >
               {({ isActive }) => (
                 <>
-                  <div className={`px-4 py-1 rounded-xl transition-colors ${isActive ? 'bg-primary/15' : ''}`}>
+                  <div className={`px-4 py-0.5 rounded-xl transition-colors ${isActive ? 'bg-primary/15' : ''}`}>
                     <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
                   </div>
                   <span className="text-[10px] font-medium">{item.label}</span>
