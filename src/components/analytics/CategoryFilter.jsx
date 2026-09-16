@@ -33,3 +33,4 @@ export default function CategoryFilter({ categories, selectedId, onChange }) {
     </div>
   );
 }
+

@@ -11,3 +11,4 @@ export const tailwindColors = {
   'text-primary': '#303632',
   'text-secondary': '#7B817C',
 };
+

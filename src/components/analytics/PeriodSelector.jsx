@@ -31,3 +31,4 @@ export default function PeriodSelector({ currentDate, onChangeDate }) {
     </div>
   );
 }
+

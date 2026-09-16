@@ -112,3 +112,4 @@ export default function ExpensePieChart({ data, selectedCategoryId }) {
     </div>
   );
 }
+
