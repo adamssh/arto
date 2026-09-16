@@ -108,3 +108,4 @@ export default function BudgetForm({ initialData, onSuccess, onCancel }) {
     </form>
   );
 }
+

@@ -50,3 +50,4 @@ export function useBudgetProgress(month, year) {
     isLoading: loadingBudgets || loadingTransactions,
   };
 }
+
