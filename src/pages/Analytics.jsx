@@ -30,7 +30,7 @@ export default function Analytics() {
   }
 
   return (
-    <div className="p-6 max-w-md mx-auto pb-24">
+    <div className="p-6 max-w-2xl mx-auto">
       <header className="mb-6 mt-4">
         <h1 className="text-2xl font-semibold">Analytics</h1>
       </header>

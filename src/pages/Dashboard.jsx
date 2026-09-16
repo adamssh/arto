@@ -13,7 +13,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-6 max-w-md mx-auto">
+    <div className="p-6 max-w-2xl mx-auto">
       <GreetingHeader />
       <BalanceCard balance={summary.totalBalance} />
       <SummaryRow income={summary.monthlyIncome} expense={summary.monthlyExpense} />

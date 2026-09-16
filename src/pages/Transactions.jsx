@@ -10,7 +10,7 @@ export default function Transactions() {
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
 
   return (
-    <div className="p-6 max-w-md mx-auto">
+    <div className="p-6 max-w-2xl mx-auto">
       <header className="mb-6 mt-4 flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Transactions</h1>
       </header>

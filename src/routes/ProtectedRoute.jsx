@@ -1,6 +1,6 @@
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import BottomNav from '../components/ui/BottomNav';
+import AppShell from '../components/ui/AppShell';
 
 export default function ProtectedRoute() {
   const { session } = useAuth();
@@ -9,11 +9,6 @@ export default function ProtectedRoute() {
     return <Navigate to="/login" replace />;
   }
 
-  return (
-    <div className="pb-24">
-      <Outlet />
-      <BottomNav />
-    </div>
-  );
+  return <AppShell />;
 }
 

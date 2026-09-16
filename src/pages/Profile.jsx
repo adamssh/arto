@@ -6,7 +6,7 @@ export default function Profile() {
   const { signOut, user } = useAuth();
 
   return (
-    <div className="p-6 max-w-md mx-auto">
+    <div className="p-6 max-w-2xl mx-auto">
       <header className="mb-8 mt-4">
         <h1 className="text-2xl font-semibold">Profile</h1>
       </header>

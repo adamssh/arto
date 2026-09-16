@@ -33,18 +33,20 @@ export default function TransactionItem({ transaction, onEdit, onDelete }) {
         <span className={`font-semibold ${isIncome ? 'text-income' : 'text-expense'}`}>
           {isIncome ? '+' : '-'}{formattedAmount}
         </span>
-        <div className="flex items-center gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity -mr-2 mt-1">
           <button 
             onClick={() => onEdit(transaction)}
-            className="p-1 text-text-secondary hover:text-primary transition-colors"
+            className="w-11 h-11 flex items-center justify-center text-text-secondary hover:text-primary transition-colors rounded-full"
+            aria-label="Edit"
           >
-            <Pencil size={14} />
+            <Pencil size={18} />
           </button>
           <button 
             onClick={() => onDelete(transaction)}
-            className="p-1 text-text-secondary hover:text-expense transition-colors"
+            className="w-11 h-11 flex items-center justify-center text-text-secondary hover:text-expense transition-colors rounded-full"
+            aria-label="Delete"
           >
-            <Trash2 size={14} />
+            <Trash2 size={18} />
           </button>
         </div>
       </div>

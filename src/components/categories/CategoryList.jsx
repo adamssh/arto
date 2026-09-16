@@ -37,18 +37,18 @@ export default function CategoryList() {
                 <div className={`w-4 h-4 rounded-full bg-${category.color}`} />
                 <span className="font-medium text-text-primary">{category.name}</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center -mr-2">
                 <button 
                   onClick={() => setEditingCategory(category)}
-                  className="p-1.5 text-text-secondary hover:text-primary transition-colors"
+                  className="w-11 h-11 flex items-center justify-center text-text-secondary hover:text-primary transition-colors rounded-full"
                 >
-                  <Pencil size={16} />
+                  <Pencil size={18} />
                 </button>
                 <button 
                   onClick={() => setDeletingCategory(category)}
-                  className="p-1.5 text-text-secondary hover:text-expense transition-colors"
+                  className="w-11 h-11 flex items-center justify-center text-text-secondary hover:text-expense transition-colors rounded-full"
                 >
-                  <Trash2 size={16} />
+                  <Trash2 size={18} />
                 </button>
               </div>
             </div>

@@ -40,18 +40,18 @@ export default function BudgetCard({ budget, onEdit, onDelete }) {
           </div>
         </div>
 
-        <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity -mr-3 -mt-2">
           <button 
             onClick={() => onEdit(budget)}
-            className="p-1.5 text-text-secondary hover:text-primary transition-colors"
+            className="w-11 h-11 flex items-center justify-center text-text-secondary hover:text-primary transition-colors rounded-full"
           >
-            <Pencil size={16} />
+            <Pencil size={18} />
           </button>
           <button 
             onClick={() => onDelete(budget)}
-            className="p-1.5 text-text-secondary hover:text-expense transition-colors"
+            className="w-11 h-11 flex items-center justify-center text-text-secondary hover:text-expense transition-colors rounded-full"
           >
-            <Trash2 size={16} />
+            <Trash2 size={18} />
           </button>
         </div>
       </div>
