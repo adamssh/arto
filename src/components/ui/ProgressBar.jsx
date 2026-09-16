@@ -11,3 +11,4 @@ export default function ProgressBar({ progress, className = '' }) {
     </div>
   );
 }
+

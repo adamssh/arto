@@ -21,7 +21,7 @@ export default {
       },
       borderRadius: {
         'xl2': '20px',
-        '2xl': '24px' // Adding another for options
+        '2xl': '24px'
       },
       boxShadow: {
         'soft': '0 8px 30px rgba(85, 117, 97, 0.12)',
@@ -31,5 +31,13 @@ export default {
       }
     },
   },
+  safelist: [
+    'bg-primary',
+    'bg-sage',
+    'bg-beige',
+    'bg-expense',
+    'bg-cream',
+    'bg-primary-dark',
+  ],
   plugins: [],
 }
