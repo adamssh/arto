@@ -114,3 +114,4 @@ export default function CategoryForm({ initialData, onSuccess, onCancel }) {
     </form>
   );
 }
+
