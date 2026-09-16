@@ -39,3 +39,4 @@ export default function SummaryRow({ income, expense }) {
     </div>
   );
 }
+

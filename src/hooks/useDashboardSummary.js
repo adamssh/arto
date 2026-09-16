@@ -35,3 +35,4 @@ export function useDashboardSummary() {
 
   return { summary, isLoading, transactions };
 }
+
