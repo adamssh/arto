@@ -17,9 +17,9 @@ export default function SideNav() {
 
   const navItems = [
     { icon: <Home size={24} />, label: 'Beranda', path: '/' },
-    { icon: <PieChart size={24} />, label: 'Analisis', path: '/analytics' },
-    { icon: <WalletCards size={24} />, label: 'Transaksi', path: '/transactions' },
     { icon: <Target size={24} />, label: 'Budget', path: '/goals' },
+    { icon: <WalletCards size={24} />, label: 'Transaksi', path: '/transactions' },
+    { icon: <PieChart size={24} />, label: 'Analisis', path: '/analytics' },
     { icon: <User size={24} />, label: 'Profil', path: '/profile' },
   ];
 
