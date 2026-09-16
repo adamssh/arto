@@ -24,7 +24,7 @@ export default function SideNav() {
   ];
 
   return (
-    <div className="hidden md:flex flex-col w-64 h-screen bg-surface border-r border-sage/10 fixed left-0 top-0 pt-8 pb-6 px-4 z-40 shadow-sm">
+    <div className="hidden md:flex flex-col w-64 h-screen bg-surface border-r border-sage/10 fixed left-0 top-0 pt-8 pb-6 px-4 z-40 shadow-soft">
       <div className="mb-10 px-4">
         <h1 className="text-3xl font-bold text-primary tracking-tight">Arto</h1>
       </div>

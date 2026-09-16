@@ -12,7 +12,7 @@ export default function TransactionItem({ transaction, onEdit, onDelete }) {
   }).format(transaction.amount);
 
   return (
-    <div className="flex items-center justify-between p-4 bg-surface rounded-xl2 shadow-sm border border-sage/10 mb-3 group">
+    <div className="flex items-center justify-between p-4 bg-surface rounded-xl2 shadow-soft border border-sage/10 mb-3 group">
       <div className="flex items-center gap-4">
         <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-${categoryColor} shrink-0`}>
           <div className="w-4 h-4 bg-white/40 rounded-full" />

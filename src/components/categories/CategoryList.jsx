@@ -32,7 +32,7 @@ export default function CategoryList() {
       ) : (
         <div className="flex flex-col gap-2">
           {list.map(category => (
-            <div key={category.id} className="flex items-center justify-between p-3 bg-surface rounded-xl border border-sage/10 shadow-sm">
+            <div key={category.id} className="flex items-center justify-between p-3 bg-surface rounded-xl border border-sage/10 shadow-soft">
               <div className="flex items-center gap-3">
                 <div className={`w-4 h-4 rounded-full bg-${category.color}`} />
                 <span className="font-medium text-text-primary">{category.name}</span>

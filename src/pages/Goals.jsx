@@ -18,7 +18,7 @@ export default function Goals() {
       </header>
 
       {(!isLoading && expenseCategories.length === 0) ? (
-        <div className="bg-surface rounded-xl2 p-6 text-center border border-sage/10 shadow-sm mt-4">
+        <div className="bg-surface rounded-xl2 p-6 text-center border border-sage/10 shadow-soft mt-4">
           <p className="text-sm font-medium text-text-primary mb-1">Belum ada kategori pengeluaran</p>
           <p className="text-xs text-text-secondary mb-4">Buat kategori pengeluaran terlebih dahulu di halaman Transactions.</p>
         </div>

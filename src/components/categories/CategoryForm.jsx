@@ -60,7 +60,7 @@ export default function CategoryForm({ initialData, onSuccess, onCancel }) {
           type="button"
           onClick={() => setValue('type', 'expense')}
           className={`flex-1 py-2 text-sm font-medium rounded-xl transition-all ${
-            selectedType === 'expense' ? 'bg-surface shadow-sm text-expense' : 'text-text-secondary'
+            selectedType === 'expense' ? 'bg-surface shadow-soft text-expense' : 'text-text-secondary'
           }`}
         >
           Pengeluaran
@@ -69,7 +69,7 @@ export default function CategoryForm({ initialData, onSuccess, onCancel }) {
           type="button"
           onClick={() => setValue('type', 'income')}
           className={`flex-1 py-2 text-sm font-medium rounded-xl transition-all ${
-            selectedType === 'income' ? 'bg-surface shadow-sm text-income' : 'text-text-secondary'
+            selectedType === 'income' ? 'bg-surface shadow-soft text-income' : 'text-text-secondary'
           }`}
         >
           Pemasukan

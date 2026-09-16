@@ -26,7 +26,7 @@ export default function BudgetCard({ budget, onEdit, onDelete }) {
   }
 
   return (
-    <div className="bg-surface rounded-xl2 p-5 border border-sage/10 shadow-sm mb-4 relative group">
+    <div className="bg-surface rounded-xl2 p-5 border border-sage/10 shadow-soft mb-4 relative group">
       <div className="flex justify-between items-start mb-3">
         <div className="flex items-center gap-3">
           <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-${category?.color || 'sage'}`}>

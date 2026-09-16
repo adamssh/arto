@@ -44,7 +44,7 @@ export default function Analytics() {
       />
 
       {summary.income === 0 && summary.expense === 0 ? (
-        <div className="bg-surface rounded-xl2 p-6 text-center border border-sage/10 shadow-sm mt-4">
+        <div className="bg-surface rounded-xl2 p-6 text-center border border-sage/10 shadow-soft mt-4">
           <div className="w-12 h-12 bg-cream rounded-full flex items-center justify-center mx-auto mb-3">
             <span className="text-xl">📊</span>
           </div>

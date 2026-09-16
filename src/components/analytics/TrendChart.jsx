@@ -46,7 +46,7 @@ export default function TrendChart({ data }) {
   return (
     <div className="mb-8">
       <h3 className="text-lg font-semibold mb-4 text-text-primary">Tren 6 Bulan Terakhir</h3>
-      <div className="bg-surface rounded-xl2 p-4 pt-6 border border-sage/10 shadow-sm h-72">
+      <div className="bg-surface rounded-xl2 p-4 pt-6 border border-sage/10 shadow-soft h-72">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={tailwindColors['sage']} strokeOpacity={0.2} />

@@ -15,7 +15,7 @@ export default function SummaryRow({ income, expense }) {
 
   return (
     <div className="flex gap-4 mb-8">
-      <div className="flex-1 bg-surface rounded-xl2 p-4 border border-sage/10 shadow-sm">
+      <div className="flex-1 bg-surface rounded-xl2 p-4 border border-sage/10 shadow-soft">
         <div className="flex items-center gap-2 mb-2 text-text-secondary">
           <div className="w-6 h-6 rounded-full bg-income/10 flex items-center justify-center">
             <ArrowDownLeft size={14} className="text-income" />
@@ -26,7 +26,7 @@ export default function SummaryRow({ income, expense }) {
         <p className="text-lg font-semibold text-income">{formatCurrency(income)}</p>
       </div>
       
-      <div className="flex-1 bg-surface rounded-xl2 p-4 border border-sage/10 shadow-sm">
+      <div className="flex-1 bg-surface rounded-xl2 p-4 border border-sage/10 shadow-soft">
         <div className="flex items-center gap-2 mb-2 text-text-secondary">
           <div className="w-6 h-6 rounded-full bg-expense/10 flex items-center justify-center">
             <ArrowUpRight size={14} className="text-expense" />

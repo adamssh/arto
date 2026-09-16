@@ -37,7 +37,7 @@ export default function ExpensePieChart({ data, selectedCategoryId }) {
 
   if (!data || data.length === 0) {
     return (
-      <div className="bg-surface rounded-xl2 p-6 text-center border border-sage/10 shadow-sm mt-4">
+      <div className="bg-surface rounded-xl2 p-6 text-center border border-sage/10 shadow-soft mt-4">
         <p className="text-sm font-medium text-text-primary mb-1">Belum ada pengeluaran</p>
         <p className="text-xs text-text-secondary">Tidak ada data untuk periode ini.</p>
       </div>
@@ -47,7 +47,7 @@ export default function ExpensePieChart({ data, selectedCategoryId }) {
   const totalExpense = data.reduce((sum, item) => sum + item.amount, 0);
 
   return (
-    <div className="bg-surface rounded-xl2 p-6 border border-sage/10 shadow-sm">
+    <div className="bg-surface rounded-xl2 p-6 border border-sage/10 shadow-soft">
       <div className="h-64 relative">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
