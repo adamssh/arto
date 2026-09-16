@@ -1,0 +1,68 @@
+import { Pencil, Trash2 } from 'lucide-react';
+import ProgressBar from '../ui/ProgressBar';
+
+export default function BudgetCard({ budget, onEdit, onDelete }) {
+  const formatCurrency = (amount) => 
+    new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+    }).format(amount);
+
+  const { status, percentage, spent, amount, category } = budget;
+
+  let progressColor = 'bg-primary';
+  let statusText = null;
+  let statusTextColor = '';
+
+  if (status === 'warning') {
+    progressColor = 'bg-beige';
+    statusText = 'Mendekati limit';
+    statusTextColor = 'text-text-secondary';
+  } else if (status === 'over') {
+    progressColor = 'bg-expense';
+    statusText = 'Melebihi limit';
+    statusTextColor = 'text-expense';
+  }
+
+  return (
+    <div className="bg-surface rounded-xl2 p-5 border border-sage/10 shadow-sm mb-4 relative group">
+      <div className="flex justify-between items-start mb-3">
+        <div className="flex items-center gap-3">
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-${category?.color || 'sage'}`}>
+            <div className="w-4 h-4 bg-white/40 rounded-full" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-text-primary">{category?.name || 'Kategori'}</h3>
+            <p className="text-xs text-text-secondary mt-0.5">
+              {formatCurrency(spent)} / {formatCurrency(amount)}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+          <button 
+            onClick={() => onEdit(budget)}
+            className="p-1.5 text-text-secondary hover:text-primary transition-colors"
+          >
+            <Pencil size={16} />
+          </button>
+          <button 
+            onClick={() => onDelete(budget)}
+            className="p-1.5 text-text-secondary hover:text-expense transition-colors"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
+      </div>
+
+      <ProgressBar progress={percentage} color={progressColor} className="mb-2" />
+      
+      {statusText && (
+        <p className={`text-xs font-medium text-right mt-1 ${statusTextColor}`}>
+          {statusText}
+        </p>
+      )}
+    </div>
+  );
+}
