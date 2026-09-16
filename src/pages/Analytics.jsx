@@ -3,7 +3,6 @@ import { useAnalytics } from '../hooks/useAnalytics';
 import PeriodSelector from '../components/analytics/PeriodSelector';
 import SummaryCard from '../components/analytics/SummaryCard';
 import TrendChart from '../components/analytics/TrendChart';
-import CategoryFilter from '../components/analytics/CategoryFilter';
 import ExpensePieChart from '../components/analytics/ExpensePieChart';
 
 export default function Analytics() {
@@ -13,8 +12,7 @@ export default function Analytics() {
   const { 
     getExpenseByCategory, 
     getMonthlyTrend, 
-    getSummary, 
-    categories, 
+    getSummary,
     isLoading 
   } = useAnalytics();
 
@@ -53,21 +51,16 @@ export default function Analytics() {
         </div>
       ) : (
         <>
-          <SummaryCard income={summary.income} expense={summary.expense} />
+          <SummaryCard income={summary.income} expense={summary.expense} month={month} year={year} />
           
           <TrendChart data={trendData} />
 
-          <h3 className="text-lg font-semibold mb-4 text-text-primary">Pengeluaran per Kategori</h3>
-          
-          <CategoryFilter 
-            categories={categories} 
-            selectedId={selectedCategoryId} 
-            onChange={setSelectedCategoryId} 
-          />
+          <h3 className="text-lg font-semibold mb-3 text-text-primary">Pengeluaran per Kategori</h3>
           
           <ExpensePieChart 
             data={expenseData} 
             selectedCategoryId={selectedCategoryId} 
+            onSelectCategory={setSelectedCategoryId}
           />
         </>
       )}

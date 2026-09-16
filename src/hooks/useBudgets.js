@@ -33,14 +33,20 @@ export function useCreateBudget() {
   return useMutation({
     mutationFn: async (newBudget) => {
       // Validate duplicates
-      const { data: existing } = await supabase
+      let query = supabase
         .from('budgets')
         .select('id')
         .eq('user_id', user.id)
-        .eq('category_id', newBudget.category_id)
         .eq('month', newBudget.month)
         .eq('year', newBudget.year);
+
+      if (newBudget.category_id) {
+        query = query.eq('category_id', newBudget.category_id);
+      } else {
+        query = query.is('category_id', null);
+      }
         
+      const { data: existing } = await query;
       if (existing && existing.length > 0) {
         throw new Error('Budget untuk kategori ini sudah ada di bulan yang sama');
       }
@@ -66,16 +72,22 @@ export function useUpdateBudget() {
   return useMutation({
     mutationFn: async ({ id, ...updates }) => {
       // If changing category, check for duplicates
-      if (updates.category_id) {
-        const { data: existing } = await supabase
+      if (updates.category_id !== undefined) {
+        let query = supabase
           .from('budgets')
           .select('id')
           .eq('user_id', user.id)
-          .eq('category_id', updates.category_id)
           .eq('month', updates.month)
           .eq('year', updates.year)
           .neq('id', id);
           
+        if (updates.category_id) {
+          query = query.eq('category_id', updates.category_id);
+        } else {
+          query = query.is('category_id', null);
+        }
+          
+        const { data: existing } = await query;
         if (existing && existing.length > 0) {
           throw new Error('Budget untuk kategori ini sudah ada di bulan yang sama');
         }

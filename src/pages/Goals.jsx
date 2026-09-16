@@ -4,6 +4,7 @@ import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
 import BudgetList from '../components/budgets/BudgetList';
 import BudgetForm from '../components/budgets/BudgetForm';
+import MonthlyBudgetCard from '../components/budgets/MonthlyBudgetCard';
 
 export default function Goals() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,8 +15,10 @@ export default function Goals() {
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <header className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Budget Bulan Ini</h1>
+        <h1 className="text-2xl font-semibold">Budget</h1>
       </header>
+
+      <MonthlyBudgetCard />
 
       {(!isLoading && expenseCategories.length === 0) ? (
         <div className="bg-surface rounded-xl2 p-6 text-center border border-sage/10 shadow-soft mt-4">
@@ -23,8 +26,8 @@ export default function Goals() {
           <p className="text-xs text-text-secondary mb-4">Buat kategori pengeluaran terlebih dahulu di halaman Transaksi.</p>
         </div>
       ) : (
-        <Button onClick={() => setIsModalOpen(true)} className="w-full mb-2">
-          + Tambah Budget
+        <Button onClick={() => setIsModalOpen(true)} className="w-full mb-6">
+          + Tambah Budget Kategori
         </Button>
       )}
 

@@ -10,3 +10,14 @@
     background-repeat: no-repeat;
   }
 }
+
+/* Remove focus outline from Recharts and SVGs */
+.recharts-wrapper,
+.recharts-surface,
+.recharts-layer,
+.recharts-pie-sector,
+path:focus,
+g:focus,
+rect:focus {
+  outline: none !important;
+}

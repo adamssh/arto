@@ -13,7 +13,9 @@ export function useBudgetProgress(month, year) {
   const budgetProgress = useMemo(() => {
     if (!budgets.length) return [];
 
-    return budgets.map(budget => {
+    const categoryBudgets = budgets.filter(b => b.category_id !== null);
+
+    return categoryBudgets.map(budget => {
       // Find all expense transactions for this category in the given month/year
       const spent = transactions.reduce((total, tx) => {
         if (tx.type !== 'expense' || tx.category_id !== budget.category_id) return total;
