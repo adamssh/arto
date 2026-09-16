@@ -11,9 +11,9 @@ export default function GreetingHeader() {
   const today = format(new Date(), 'EEEE, d MMMM yyyy', { locale: idLocale });
 
   return (
-    <header className="mb-6 mt-4">
+    <header className="mb-6">
       <h1 className="text-2xl font-semibold text-text-primary">Halo, {fullName}</h1>
-      <p className="text-text-secondary mt-1 text-sm">{today}</p>
+      <p className="text-text-primary/90 mt-1 text-sm">{today}</p>
     </header>
   );
 }

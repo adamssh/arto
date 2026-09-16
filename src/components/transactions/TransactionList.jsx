@@ -1,18 +1,18 @@
 import { useState } from 'react';
 import { format, parseISO, isToday, isYesterday } from 'date-fns';
 import id from 'date-fns/locale/id';
-import { useTransactions, useDeleteTransaction } from '../../hooks/useTransactions';
+import { useTransactions } from '../../hooks/useTransactions';
 import TransactionItem from './TransactionItem';
 import TransactionForm from './TransactionForm';
 import Modal from '../ui/Modal';
 import Button from '../ui/Button';
+import CategoryForm from '../categories/CategoryForm';
 
 export default function TransactionList() {
   const { data: transactions, isLoading } = useTransactions();
-  const deleteMutation = useDeleteTransaction();
 
   const [editingTransaction, setEditingTransaction] = useState(null);
-  const [deletingTransaction, setDeletingTransaction] = useState(null);
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false);
 
   if (isLoading) return <div className="p-4 text-center text-text-secondary">Memuat transaksi...</div>;
   if (!transactions || transactions.length === 0) {
@@ -36,13 +36,6 @@ export default function TransactionList() {
     return format(d, 'EEEE, d MMMM', { locale: id });
   };
 
-  const handleDelete = async () => {
-    if (deletingTransaction) {
-      await deleteMutation.mutateAsync(deletingTransaction.id);
-      setDeletingTransaction(null);
-    }
-  };
-
   return (
     <div className="pb-8">
       {dates.map(date => (
@@ -56,7 +49,6 @@ export default function TransactionList() {
                 key={t.id} 
                 transaction={t} 
                 onEdit={setEditingTransaction}
-                onDelete={setDeletingTransaction}
               />
             ))}
           </div>
@@ -73,32 +65,23 @@ export default function TransactionList() {
             initialData={editingTransaction} 
             onSuccess={() => setEditingTransaction(null)}
             onCancel={() => setEditingTransaction(null)}
+            onOpenCategoryManage={() => setCategoryModalOpen(true)}
           />
         )}
       </Modal>
 
       <Modal
-        isOpen={!!deletingTransaction}
-        onClose={() => setDeletingTransaction(null)}
-        title="Hapus Transaksi"
+        isOpen={categoryModalOpen}
+        onClose={() => setCategoryModalOpen(false)}
+        title="Tambah Kategori"
       >
-        <div className="flex flex-col gap-4">
-          <p className="text-text-secondary">
-            Apakah Anda yakin ingin menghapus transaksi ini?
-          </p>
-          <div className="flex gap-3 mt-2">
-            <Button variant="secondary" onClick={() => setDeletingTransaction(null)} className="flex-1">
-              Batal
-            </Button>
-            <Button 
-              onClick={handleDelete} 
-              disabled={deleteMutation.isPending}
-              className="flex-1 bg-expense hover:bg-expense/90"
-            >
-              {deleteMutation.isPending ? 'Menghapus...' : 'Hapus'}
-            </Button>
-          </div>
-        </div>
+        {categoryModalOpen && (
+          <CategoryForm
+            initialData={{ type: editingTransaction?.type || 'expense' }}
+            onSuccess={() => setCategoryModalOpen(false)}
+            onCancel={() => setCategoryModalOpen(false)}
+          />
+        )}
       </Modal>
     </div>
   );

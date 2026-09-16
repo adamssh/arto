@@ -5,7 +5,7 @@
 @layer base {
   body {
     @apply text-text-primary antialiased min-h-screen;
-    background: linear-gradient(to bottom, #81AB9B 0%, #81AB9B 20%, #F3F3F3 20%, #F3F3F3 100%);
+    background: linear-gradient(to bottom, #81AB9B 0%, #F3F3F3 25%, #F3F3F3 100%);
     background-attachment: fixed;
     background-repeat: no-repeat;
   }

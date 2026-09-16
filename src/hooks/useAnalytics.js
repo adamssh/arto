@@ -23,11 +23,12 @@ export function useAnalytics() {
       ) {
         const catId = tx.category_id;
         if (!expensesMap[catId]) {
+          const colorName = (tx.category?.color || 'sage').split(':')[0];
           expensesMap[catId] = {
             id: catId,
             categoryName: tx.category?.name || 'Tanpa Kategori',
             amount: 0,
-            color: tailwindColors[tx.category?.color] || tailwindColors['sage'],
+            color: tailwindColors[colorName] || tailwindColors['sage'],
             rawColor: tx.category?.color || 'sage'
           };
         }

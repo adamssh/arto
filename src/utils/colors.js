@@ -1,6 +1,6 @@
 export const tailwindColors = {
   background: '#D1DAD7',
-  surface: '#FAFAF7',
+  surface: '#FFFFFF',
   cream: '#F2EEE2',
   primary: '#678770',
   'primary-dark': '#557561',
@@ -10,5 +10,14 @@ export const tailwindColors = {
   expense: '#B87568',
   'text-primary': '#303632',
   'text-secondary': '#7B817C',
+  'pastel-red': '#FFB3BA',
+  'pastel-orange': '#FFDFBA',
+  'pastel-green': '#BAFFC9',
+  'pastel-blue': '#BAE1FF',
+  'pastel-purple': '#D5AAFF',
+  'pastel-pink': '#FFC4E1',
+  'pastel-teal': '#A2E1DB',
+  'pastel-peach': '#FFD3B6',
+  'pastel-lavender': '#E6B3FF',
 };
 

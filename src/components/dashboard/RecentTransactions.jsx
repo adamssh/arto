@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import TransactionItem from '../transactions/TransactionItem';
 
-export default function RecentTransactions({ transactions }) {
+export default function RecentTransactions({ transactions, onEditTransaction }) {
   if (!transactions || transactions.length === 0) {
     return (
       <div>
@@ -20,12 +20,6 @@ export default function RecentTransactions({ transactions }) {
 
   const recentTxs = transactions.slice(0, 5);
 
-  // We provide empty handlers for edit/delete since this is just a preview.
-  // The user should go to the Transactions page to edit/delete.
-  const handleNoop = () => {
-    alert("Silakan ke halaman Transactions untuk mengedit atau menghapus.");
-  };
-
   return (
     <div className="pb-8">
       <div className="flex items-center justify-between mb-4">
@@ -41,8 +35,7 @@ export default function RecentTransactions({ transactions }) {
           <TransactionItem 
             key={t.id} 
             transaction={t} 
-            onEdit={handleNoop}
-            onDelete={handleNoop}
+            onEdit={onEditTransaction}
           />
         ))}
       </div>

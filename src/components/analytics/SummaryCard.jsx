@@ -9,7 +9,7 @@ export default function SummaryCard({ income, expense }) {
   const balance = income - expense;
 
   return (
-    <div className="bg-primary-dark text-surface rounded-xl2 p-6 shadow-soft mb-8 relative overflow-hidden">
+    <div className="bg-gradient-to-br from-primary-dark to-primary text-surface rounded-xl2 p-6 shadow-soft mb-8 relative overflow-hidden">
       <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -mr-10 -mt-10" />
       <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full blur-xl -ml-8 -mb-8" />
       

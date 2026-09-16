@@ -4,6 +4,7 @@ import { useCategories, useDeleteCategory } from '../../hooks/useCategories';
 import CategoryForm from './CategoryForm';
 import Modal from '../ui/Modal';
 import Button from '../ui/Button';
+import CategoryIcon from '../ui/CategoryIcon';
 
 export default function CategoryList() {
   const { data: categories, isLoading } = useCategories();
@@ -34,7 +35,7 @@ export default function CategoryList() {
           {list.map(category => (
             <div key={category.id} className="flex items-center justify-between p-3 bg-surface rounded-xl border border-sage/10 shadow-soft">
               <div className="flex items-center gap-3">
-                <div className={`w-4 h-4 rounded-full bg-${category.color}`} />
+                <CategoryIcon colorString={category.color} size="md" />
                 <span className="font-medium text-text-primary">{category.name}</span>
               </div>
               <div className="flex items-center -mr-2">

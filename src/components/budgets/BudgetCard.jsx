@@ -1,5 +1,6 @@
 import { Pencil, Trash2 } from 'lucide-react';
 import ProgressBar from '../ui/ProgressBar';
+import CategoryIcon from '../ui/CategoryIcon';
 
 export default function BudgetCard({ budget, onEdit, onDelete }) {
   const formatCurrency = (amount) => 
@@ -29,9 +30,7 @@ export default function BudgetCard({ budget, onEdit, onDelete }) {
     <div className="bg-surface rounded-xl2 p-5 border border-sage/10 shadow-soft mb-4 relative group">
       <div className="flex justify-between items-start mb-3">
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-${category?.color || 'sage'}`}>
-            <div className="w-4 h-4 bg-white/40 rounded-full" />
-          </div>
+          <CategoryIcon colorString={category?.color} size="md" />
           <div>
             <h3 className="font-semibold text-text-primary">{category?.name || 'Kategori'}</h3>
             <p className="text-xs text-text-secondary mt-0.5">
