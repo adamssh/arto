@@ -3,11 +3,11 @@ import { NavLink } from 'react-router-dom';
 
 export default function BottomNav() {
   const navItems = [
-    { to: '/', icon: Home, label: 'Home' },
-    { to: '/analytics', icon: PieChart, label: 'Analytics' },
-    { to: '/transactions', icon: ArrowLeftRight, label: 'Transactions' },
-    { to: '/goals', icon: Target, label: 'Goals' },
-    { to: '/profile', icon: User, label: 'Profile' },
+    { to: '/', icon: Home, label: 'Beranda' },
+    { to: '/analytics', icon: PieChart, label: 'Analisis' },
+    { to: '/transactions', icon: ArrowLeftRight, label: 'Transaksi' },
+    { to: '/goals', icon: Target, label: 'Budget' },
+    { to: '/profile', icon: User, label: 'Profil' },
   ];
 
   return (
@@ -20,13 +20,19 @@ export default function BottomNav() {
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `flex flex-col items-center gap-1 transition-colors ${
+                `flex flex-col items-center justify-center gap-1 transition-colors w-16 ${
                   isActive ? 'text-primary' : 'text-text-secondary hover:text-sage'
                 }`
               }
             >
-              <Icon size={24} strokeWidth={2} />
-              <span className="text-[10px] font-medium">{item.label}</span>
+              {({ isActive }) => (
+                <>
+                  <div className={`px-4 py-1 rounded-xl transition-colors ${isActive ? 'bg-primary/15' : ''}`}>
+                    <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
+                  </div>
+                  <span className="text-[10px] font-medium">{item.label}</span>
+                </>
+              )}
             </NavLink>
           );
         })}

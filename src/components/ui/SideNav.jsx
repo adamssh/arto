@@ -16,11 +16,11 @@ export default function SideNav() {
   };
 
   const navItems = [
-    { icon: <Home size={24} />, label: 'Home', path: '/' },
-    { icon: <PieChart size={24} />, label: 'Analytics', path: '/analytics' },
-    { icon: <WalletCards size={24} />, label: 'Transactions', path: '/transactions' },
-    { icon: <Target size={24} />, label: 'Goals', path: '/goals' },
-    { icon: <User size={24} />, label: 'Profile', path: '/profile' },
+    { icon: <Home size={24} />, label: 'Beranda', path: '/' },
+    { icon: <PieChart size={24} />, label: 'Analisis', path: '/analytics' },
+    { icon: <WalletCards size={24} />, label: 'Transaksi', path: '/transactions' },
+    { icon: <Target size={24} />, label: 'Budget', path: '/goals' },
+    { icon: <User size={24} />, label: 'Profil', path: '/profile' },
   ];
 
   return (
