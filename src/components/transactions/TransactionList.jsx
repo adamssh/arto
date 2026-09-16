@@ -1,9 +1,10 @@
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { format, parseISO, isToday, isYesterday } from 'date-fns';
 import id from 'date-fns/locale/id';
-import { Search, SlidersHorizontal, X } from 'lucide-react';
+import { Search, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import { useTransactions } from '../../hooks/useTransactions';
 import { useCategories } from '../../hooks/useCategories';
+import CategoryIcon from '../ui/CategoryIcon';
 import TransactionItem from './TransactionItem';
 import TransactionForm from './TransactionForm';
 import Modal from '../ui/Modal';
@@ -18,6 +19,18 @@ export default function TransactionList() {
 
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const categoryDropdownRef = React.useRef(null);
+
+  React.useEffect(() => {
+    function handleClickOutside(event) {
+      if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target)) {
+        setIsCategoryOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Search & Filter State
   const [searchTerm, setSearchTerm] = useState('');
@@ -127,17 +140,62 @@ export default function TransactionList() {
           
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-text-secondary ml-1">Kategori</label>
-            <div className="relative">
-              <select
-                value={filters.categoryId}
-                onChange={e => setFilters({...filters, categoryId: e.target.value})}
-                className="w-full bg-surface border border-sage/30 rounded-xl px-3 py-2 text-text-primary focus:outline-none focus:border-primary appearance-none"
+            <div className="relative" ref={categoryDropdownRef}>
+              <div 
+                className="w-full bg-surface border border-sage/30 rounded-xl px-3 py-2 flex items-center justify-between cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all select-none"
+                onClick={() => setIsCategoryOpen(!isCategoryOpen)}
               >
-                <option value="">Semua Kategori</option>
-                {categories?.map(c => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
+                <div className="flex items-center gap-2">
+                  {filters.categoryId ? (() => {
+                    const selectedCategory = categories.find(c => c.id === filters.categoryId);
+                    if (selectedCategory) {
+                      return (
+                        <>
+                          <CategoryIcon colorString={selectedCategory.color} size="sm" />
+                          <span className="text-text-primary text-sm font-medium">{selectedCategory.name}</span>
+                        </>
+                      );
+                    }
+                    return <span className="text-text-secondary text-sm">Semua Kategori</span>;
+                  })() : (
+                    <span className="text-text-secondary text-sm">Semua Kategori</span>
+                  )}
+                </div>
+                <ChevronDown size={16} className={`text-text-secondary transition-transform ${isCategoryOpen ? 'rotate-180' : ''}`} />
+              </div>
+
+              {isCategoryOpen && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-surface rounded-xl shadow-[0_8px_30px_rgba(85,117,97,0.12)] border border-sage/10 overflow-hidden z-50 max-h-60 overflow-y-auto p-2 flex flex-col gap-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFilters({...filters, categoryId: ''});
+                      setIsCategoryOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-colors ${
+                      !filters.categoryId ? 'bg-primary/5 text-primary' : 'hover:bg-surface/80 text-text-primary'
+                    }`}
+                  >
+                    <span className="font-medium text-sm text-center w-full">Semua Kategori</span>
+                  </button>
+                  {categories.map(c => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => {
+                        setFilters({...filters, categoryId: c.id});
+                        setIsCategoryOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl transition-colors ${
+                        filters.categoryId === c.id ? 'bg-primary/5 text-primary' : 'hover:bg-surface/80 text-text-primary'
+                      }`}
+                    >
+                      <CategoryIcon colorString={c.color} size="sm" />
+                      <span className="font-medium text-sm">{c.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 

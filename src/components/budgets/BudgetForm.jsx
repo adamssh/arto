@@ -1,7 +1,9 @@
+import React, { useState, useRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
+import CategoryIcon from '../ui/CategoryIcon';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
 import { useCategories } from '../../hooks/useCategories';
@@ -24,7 +26,20 @@ export default function BudgetForm({ initialData, onSuccess, onCancel }) {
 
   const expenseCategories = categories.filter(c => c.type === 'expense');
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const categoryDropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target)) {
+        setIsCategoryOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm({
     resolver: zodResolver(budgetSchema),
     defaultValues: {
       budgetNominal: initialData?.amount || '',
@@ -71,16 +86,52 @@ export default function BudgetForm({ initialData, onSuccess, onCancel }) {
         {expenseCategories.length === 0 ? (
           <p className="text-sm text-expense mt-1">Belum ada kategori pengeluaran.</p>
         ) : (
-          <select 
-            className="w-full bg-surface/50 border border-sage/30 rounded-xl2 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none"
-            autoComplete="off"
-            {...register('categoryId')}
-          >
-            <option value="" disabled>Pilih Kategori</option>
-            {expenseCategories.map(c => (
-              <option key={c.id} value={c.id}>{c.name}</option>
-            ))}
-          </select>
+          <div className="relative" ref={categoryDropdownRef}>
+            <input type="hidden" {...register('categoryId')} />
+            <div 
+              className="w-full bg-surface/50 border border-sage/30 rounded-xl2 px-4 py-3 flex items-center justify-between cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all select-none"
+              onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+            >
+              <div className="flex items-center gap-3">
+                {watch('categoryId') ? (() => {
+                  const selectedCategory = expenseCategories.find(c => c.id === watch('categoryId'));
+                  if (selectedCategory) {
+                    return (
+                      <>
+                        <CategoryIcon colorString={selectedCategory.color} size="sm" />
+                        <span className="text-text-primary font-medium">{selectedCategory.name}</span>
+                      </>
+                    );
+                  }
+                  return <span className="text-text-secondary">Pilih Kategori</span>;
+                })() : (
+                  <span className="text-text-secondary">Pilih Kategori</span>
+                )}
+              </div>
+              <ChevronDown size={18} className={`text-text-secondary transition-transform ${isCategoryOpen ? 'rotate-180' : ''}`} />
+            </div>
+
+            {isCategoryOpen && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-surface rounded-xl2 shadow-[0_8px_30px_rgba(85,117,97,0.12)] border border-sage/10 overflow-hidden z-50 max-h-60 overflow-y-auto p-2 flex flex-col gap-1">
+                {expenseCategories.map(c => (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => {
+                      setValue('categoryId', c.id, { shouldValidate: true });
+                      setIsCategoryOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
+                      watch('categoryId') === c.id ? 'bg-primary/5 text-primary' : 'hover:bg-surface/80 text-text-primary'
+                    }`}
+                  >
+                    <CategoryIcon colorString={c.color} size="sm" />
+                    <span className="font-medium">{c.name}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         )}
         {errors.categoryId && <span className="text-xs text-expense ml-1">{errors.categoryId.message}</span>}
       </div>
