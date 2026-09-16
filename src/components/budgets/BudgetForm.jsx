@@ -8,8 +8,8 @@ import { useCategories } from '../../hooks/useCategories';
 import { useCreateBudget, useUpdateBudget } from '../../hooks/useBudgets';
 
 const budgetSchema = z.object({
-  amount: z.coerce.number().positive('Jumlah harus lebih dari 0'),
-  category_id: z.string().min(1, 'Pilih kategori'),
+  budgetNominal: z.coerce.number().positive('Jumlah harus lebih dari 0'),
+  categoryId: z.string().min(1, 'Pilih kategori'),
 });
 
 export default function BudgetForm({ initialData, onSuccess, onCancel }) {
@@ -27,27 +27,28 @@ export default function BudgetForm({ initialData, onSuccess, onCancel }) {
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(budgetSchema),
     defaultValues: {
-      amount: initialData?.amount || '',
-      category_id: initialData?.category_id || '',
+      budgetNominal: initialData?.amount || '',
+      categoryId: initialData?.category_id || '',
     }
   });
 
   const onSubmit = async (data) => {
     setSubmitError(null);
     try {
+      const payload = {
+        amount: data.budgetNominal,
+        category_id: data.categoryId,
+        month: currentMonth,
+        year: currentYear
+      };
+
       if (isEditing) {
         await updateMutation.mutateAsync({ 
           id: initialData.id, 
-          ...data,
-          month: currentMonth,
-          year: currentYear
+          ...payload
         });
       } else {
-        await createMutation.mutateAsync({
-          ...data,
-          month: currentMonth,
-          year: currentYear
-        });
+        await createMutation.mutateAsync(payload);
       }
       onSuccess?.();
     } catch (error) {
@@ -58,7 +59,7 @@ export default function BudgetForm({ initialData, onSuccess, onCancel }) {
   const isPending = createMutation.isPending || updateMutation.isPending;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" autoComplete="off">
       {submitError && (
         <div className="bg-expense/10 text-expense p-3 rounded-lg text-sm">
           {submitError}
@@ -72,7 +73,8 @@ export default function BudgetForm({ initialData, onSuccess, onCancel }) {
         ) : (
           <select 
             className="w-full bg-surface/50 border border-sage/30 rounded-xl2 px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none"
-            {...register('category_id')}
+            autoComplete="off"
+            {...register('categoryId')}
           >
             <option value="" disabled>Pilih Kategori</option>
             {expenseCategories.map(c => (
@@ -80,15 +82,19 @@ export default function BudgetForm({ initialData, onSuccess, onCancel }) {
             ))}
           </select>
         )}
-        {errors.category_id && <span className="text-xs text-expense ml-1">{errors.category_id.message}</span>}
+        {errors.categoryId && <span className="text-xs text-expense ml-1">{errors.categoryId.message}</span>}
       </div>
 
       <Input
         label="Batas Maksimal (Rp)"
-        type="number"
+        type="text"
+        inputMode="decimal"
         placeholder="0"
-        error={errors.amount?.message}
-        {...register('amount')}
+        autoComplete="off"
+        data-lpignore="true"
+        data-1p-ignore="true"
+        error={errors.budgetNominal?.message}
+        {...register('budgetNominal')}
       />
 
       <div className="flex gap-3 mt-4">

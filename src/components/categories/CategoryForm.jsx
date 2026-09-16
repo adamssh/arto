@@ -8,10 +8,10 @@ import Button from '../ui/Button';
 import { useCreateCategory, useUpdateCategory } from '../../hooks/useCategories';
 
 const categorySchema = z.object({
-  name: z.string().min(1, 'Nama kategori wajib diisi').max(30, 'Maksimal 30 karakter'),
-  type: z.enum(['income', 'expense'], { required_error: 'Pilih tipe kategori' }),
-  color: z.string().min(1, 'Warna wajib dipilih'),
-  icon: z.string().min(1, 'Ikon wajib dipilih'),
+  catName: z.string().min(1, 'Nama kategori wajib diisi').max(30, 'Maksimal 30 karakter'),
+  catType: z.enum(['income', 'expense'], { required_error: 'Pilih tipe kategori' }),
+  catColor: z.string().min(1, 'Warna wajib dipilih'),
+  catIcon: z.string().min(1, 'Ikon wajib dipilih'),
 });
 
 const COLORS = [
@@ -36,23 +36,23 @@ export default function CategoryForm({ initialData, onSuccess, onCancel }) {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
     resolver: zodResolver(categorySchema),
     defaultValues: {
-      name: initialData?.name || '',
-      type: initialData?.type || 'expense',
-      color: initialColorName,
-      icon: initialIconName
+      catName: initialData?.name || '',
+      catType: initialData?.type || 'expense',
+      catColor: initialColorName,
+      catIcon: initialIconName
     }
   });
 
-  const selectedType = watch('type');
-  const selectedColor = watch('color');
-  const selectedIcon = watch('icon');
+  const selectedType = watch('catType');
+  const selectedColor = watch('catColor');
+  const selectedIcon = watch('catIcon');
 
   const onSubmit = async (data) => {
     try {
       const payload = {
-        name: data.name,
-        type: data.type,
-        color: `${data.color}:${data.icon}`
+        name: data.catName,
+        type: data.catType,
+        color: `${data.catColor}:${data.catIcon}`
       };
       
       if (isEditing) {
@@ -69,11 +69,11 @@ export default function CategoryForm({ initialData, onSuccess, onCancel }) {
   const isPending = createMutation.isPending || updateMutation.isPending;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5" autoComplete="off">
       <div className="flex bg-surface/50 p-1.5 rounded-xl2 border border-sage/20">
         <button
           type="button"
-          onClick={() => setValue('type', 'income')}
+          onClick={() => setValue('catType', 'income')}
           className={`flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all flex items-center justify-center gap-2 ${
             selectedType === 'income' ? 'bg-income text-white shadow-md' : 'text-text-secondary hover:bg-surface/80 hover:text-text-primary'
           }`}
@@ -83,7 +83,7 @@ export default function CategoryForm({ initialData, onSuccess, onCancel }) {
         </button>
         <button
           type="button"
-          onClick={() => setValue('type', 'expense')}
+          onClick={() => setValue('catType', 'expense')}
           className={`flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all flex items-center justify-center gap-2 ${
             selectedType === 'expense' ? 'bg-expense text-white shadow-md' : 'text-text-secondary hover:bg-surface/80 hover:text-text-primary'
           }`}
@@ -95,9 +95,13 @@ export default function CategoryForm({ initialData, onSuccess, onCancel }) {
 
       <Input
         label="Nama Kategori"
+        type="text"
         placeholder="Cth: Makanan, Gaji"
-        error={errors.name?.message}
-        {...register('name')}
+        autoComplete="off"
+        data-lpignore="true"
+        data-1p-ignore="true"
+        error={errors.catName?.message}
+        {...register('catName')}
       />
 
       <div className="flex flex-col gap-1.5">
@@ -107,7 +111,7 @@ export default function CategoryForm({ initialData, onSuccess, onCancel }) {
             <button
               key={colorName}
               type="button"
-              onClick={() => setValue('color', colorName)}
+              onClick={() => setValue('catColor', colorName)}
               className={`w-10 h-10 rounded-xl bg-${colorName} transition-transform ${
                 selectedColor === colorName ? 'ring-2 ring-offset-2 ring-primary scale-110' : ''
               }`}
@@ -115,7 +119,7 @@ export default function CategoryForm({ initialData, onSuccess, onCancel }) {
             />
           ))}
         </div>
-        {errors.color && <span className="text-xs text-expense ml-1">{errors.color.message}</span>}
+        {errors.catColor && <span className="text-xs text-expense ml-1">{errors.catColor.message}</span>}
       </div>
 
       <div className="flex flex-col gap-1.5">
@@ -127,7 +131,7 @@ export default function CategoryForm({ initialData, onSuccess, onCancel }) {
               <button
                 key={iconName}
                 type="button"
-                onClick={() => setValue('icon', iconName)}
+                onClick={() => setValue('catIcon', iconName)}
                 className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
                   selectedIcon === iconName 
                     ? `bg-${selectedColor} text-surface/90 shadow-sm scale-110` 
@@ -140,7 +144,7 @@ export default function CategoryForm({ initialData, onSuccess, onCancel }) {
             )
           })}
         </div>
-        {errors.icon && <span className="text-xs text-expense ml-1">{errors.icon.message}</span>}
+        {errors.catIcon && <span className="text-xs text-expense ml-1">{errors.catIcon.message}</span>}
       </div>
 
       <div className="flex gap-3 mt-4">

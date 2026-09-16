@@ -1,9 +1,9 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useEffect, useState, useRef } from 'react';
-import { format } from 'date-fns';
 import { ChevronDown, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { format } from 'date-fns';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
 import CategoryIcon from '../ui/CategoryIcon';
@@ -12,46 +12,45 @@ import { useCategories } from '../../hooks/useCategories';
 import { useCreateTransaction, useUpdateTransaction, useDeleteTransaction } from '../../hooks/useTransactions';
 
 const transactionSchema = z.object({
-  type: z.enum(['income', 'expense']),
-  amount: z.coerce.number().positive('Jumlah harus lebih dari 0'),
-  category_id: z.string().min(1, 'Pilih kategori'),
-  description: z.string().optional(),
-  transaction_date: z.string().min(1, 'Tanggal wajib diisi'),
+  trxType: z.enum(['income', 'expense']),
+  trxNominal: z.coerce.number().positive('Jumlah harus lebih dari 0'),
+  categoryId: z.string().min(1, 'Kategori wajib dipilih'),
+  trxDate: z.string().min(1, 'Tanggal wajib diisi'),
+  trxNote: z.string().optional(),
 });
 
 export default function TransactionForm({ initialData, onSuccess, onCancel, onOpenCategoryManage }) {
-  const isEditing = !!initialData?.id;
+  const isEditing = !!initialData;
   const { data: categories = [], isLoading: isLoadingCategories } = useCategories();
   const createMutation = useCreateTransaction();
   const updateMutation = useUpdateTransaction();
   const deleteMutation = useDeleteTransaction();
-  const [isDeleting, setIsDeleting] = useState(false);
   
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
     resolver: zodResolver(transactionSchema),
     defaultValues: {
-      type: initialData?.type || 'expense',
-      amount: initialData?.amount || '',
-      category_id: initialData?.category_id || '',
-      description: initialData?.description || '',
-      transaction_date: initialData?.transaction_date || format(new Date(), 'yyyy-MM-dd'),
+      trxType: initialData?.type || 'expense',
+      trxNominal: initialData?.amount || '',
+      categoryId: initialData?.category_id || '',
+      trxDate: initialData?.transaction_date || format(new Date(), 'yyyy-MM-dd'),
+      trxNote: initialData?.description || ''
     }
   });
 
-  const selectedType = watch('type');
-  
+  const selectedType = watch('trxType');
   const filteredCategories = categories.filter(c => c.type === selectedType);
 
   // Reset category when type changes and current category is invalid
   useEffect(() => {
-    const currentCategoryId = watch('category_id');
+    const currentCategoryId = watch('categoryId');
     const isValidCategory = filteredCategories.some(c => c.id === currentCategoryId);
     
     if (currentCategoryId && !isValidCategory) {
-      setValue('category_id', '', { shouldValidate: false });
+      setValue('categoryId', '', { shouldValidate: false });
     }
   }, [selectedType, filteredCategories, setValue, watch]);
 
@@ -68,10 +67,18 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
 
   const onSubmit = async (data) => {
     try {
+      const payload = {
+        type: data.trxType,
+        amount: data.trxNominal,
+        category_id: data.categoryId,
+        transaction_date: data.trxDate,
+        description: data.trxNote
+      };
+
       if (isEditing) {
-        await updateMutation.mutateAsync({ id: initialData.id, ...data });
+        await updateMutation.mutateAsync({ id: initialData.id, ...payload });
       } else {
-        await createMutation.mutateAsync(data);
+        await createMutation.mutateAsync(payload);
       }
       onSuccess?.();
     } catch (error) {
@@ -102,11 +109,11 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" autoComplete="off">
       <div className="flex bg-surface/50 p-1.5 rounded-xl2 mb-1 border border-sage/20">
         <button
           type="button"
-          onClick={() => setValue('type', 'income')}
+          onClick={() => setValue('trxType', 'income')}
           className={`flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all flex items-center justify-center gap-2 ${
             selectedType === 'income' ? 'bg-income text-white shadow-md' : 'text-text-secondary hover:bg-surface/80 hover:text-text-primary'
           }`}
@@ -116,7 +123,7 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
         </button>
         <button
           type="button"
-          onClick={() => setValue('type', 'expense')}
+          onClick={() => setValue('trxType', 'expense')}
           className={`flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all flex items-center justify-center gap-2 ${
             selectedType === 'expense' ? 'bg-expense text-white shadow-md' : 'text-text-secondary hover:bg-surface/80 hover:text-text-primary'
           }`}
@@ -129,10 +136,14 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
       <div className="flex flex-col">
         <Input
           label="Jumlah (Rp)"
-          type="number"
+          type="text"
+          inputMode="decimal"
           placeholder="0"
-          error={errors.amount?.message}
-          {...register('amount')}
+          autoComplete="off"
+          data-lpignore="true"
+          data-1p-ignore="true"
+          error={errors.trxNominal?.message}
+          {...register('trxNominal')}
         />
         <div className="flex gap-2 mt-2 ml-1">
           {[10000, 5000, 2000, 1000].map(val => (
@@ -140,8 +151,8 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
               key={val}
               type="button"
               onClick={() => {
-                const current = Number(watch('amount')) || 0;
-                setValue('amount', current + val, { shouldValidate: true });
+                const current = Number(watch('trxNominal')) || 0;
+                setValue('trxNominal', current + val, { shouldValidate: true });
               }}
               className="flex-1 py-1.5 text-xs font-medium bg-surface border border-sage/20 rounded-lg text-primary hover:bg-primary/5 hover:border-primary/30 transition-all"
             >
@@ -157,14 +168,14 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
            <p className="text-sm text-expense mt-1">Belum ada kategori untuk tipe ini.</p>
         ) : (
           <div className="relative">
-            <input type="hidden" {...register('category_id')} />
+            <input type="hidden" {...register('categoryId')} />
             <div 
               className="w-full bg-surface/50 border border-sage/30 rounded-xl2 px-4 py-3 flex items-center justify-between cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all select-none"
               onClick={() => setIsCategoryOpen(!isCategoryOpen)}
             >
               <div className="flex items-center gap-3">
-                {watch('category_id') ? (() => {
-                  const selectedCategory = filteredCategories.find(c => c.id === watch('category_id'));
+                {watch('categoryId') ? (() => {
+                  const selectedCategory = filteredCategories.find(c => c.id === watch('categoryId'));
                   if (selectedCategory) {
                     return (
                       <>
@@ -188,11 +199,11 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
                     key={c.id}
                     type="button"
                     onClick={() => {
-                      setValue('category_id', c.id, { shouldValidate: true });
+                      setValue('categoryId', c.id, { shouldValidate: true });
                       setIsCategoryOpen(false);
                     }}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
-                      watch('category_id') === c.id ? 'bg-primary/5 text-primary' : 'hover:bg-surface/80 text-text-primary'
+                      watch('categoryId') === c.id ? 'bg-primary/5 text-primary' : 'hover:bg-surface/80 text-text-primary'
                     }`}
                   >
                     <CategoryIcon colorString={c.color} size="sm" />
@@ -223,24 +234,27 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
             )}
           </div>
         )}
-        {errors.category_id && <span className="text-xs text-expense ml-1">{errors.category_id.message}</span>}
+        {errors.categoryId && <span className="text-xs text-expense ml-1">{errors.categoryId.message}</span>}
       </div>
 
       <div className="flex flex-col gap-1.5 relative">
-        <input type="hidden" {...register('transaction_date')} />
+        <input type="hidden" {...register('trxDate')} />
         <DatePicker
           label="Tanggal"
-          value={watch('transaction_date')}
-          onChange={(val) => setValue('transaction_date', val, { shouldValidate: true })}
-          error={errors.transaction_date?.message}
+          value={watch('trxDate')}
+          onChange={(val) => setValue('trxDate', val, { shouldValidate: true })}
+          error={errors.trxDate?.message}
         />
       </div>
 
       <Input
         label="Catatan (opsional)"
         placeholder="Makan siang, bensin, dll"
-        error={errors.description?.message}
-        {...register('description')}
+        autoComplete="off"
+        data-lpignore="true"
+        data-1p-ignore="true"
+        error={errors.trxNote?.message}
+        {...register('trxNote')}
       />
 
       <div className="flex gap-3 mt-4 w-full">
