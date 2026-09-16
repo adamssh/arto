@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply text-text-primary antialiased min-h-screen;
+    background: radial-gradient(circle at top center, theme('colors.cream') 0%, theme('colors.background') 100%);
+    background-attachment: fixed;
+  }
+}
