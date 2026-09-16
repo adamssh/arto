@@ -17,22 +17,19 @@ const transactionSchema = z.object({
 });
 
 export default function TransactionForm({ initialData, onSuccess, onCancel, onOpenCategoryManage }) {
-  const isEditing = !!initialData;
+  const isEditing = !!initialData?.id;
   const { data: categories = [], isLoading: isLoadingCategories } = useCategories();
   const createMutation = useCreateTransaction();
   const updateMutation = useUpdateTransaction();
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
     resolver: zodResolver(transactionSchema),
-    defaultValues: initialData ? {
-      ...initialData,
-      transaction_date: initialData.transaction_date,
-    } : {
-      type: 'expense',
-      amount: '',
-      category_id: '',
-      description: '',
-      transaction_date: format(new Date(), 'yyyy-MM-dd'),
+    defaultValues: {
+      type: initialData?.type || 'expense',
+      amount: initialData?.amount || '',
+      category_id: initialData?.category_id || '',
+      description: initialData?.description || '',
+      transaction_date: initialData?.transaction_date || format(new Date(), 'yyyy-MM-dd'),
     }
   });
 
