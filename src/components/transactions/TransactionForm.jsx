@@ -13,7 +13,11 @@ import { useCreateTransaction, useUpdateTransaction, useDeleteTransaction } from
 
 const transactionSchema = z.object({
   trxType: z.enum(['income', 'expense']),
-  trxNominal: z.coerce.number().positive('Jumlah harus lebih dari 0'),
+  trxNominal: z.union([z.string(), z.number()]).transform(val => {
+    if (typeof val === 'number') return val;
+    const cleaned = val.replace(/[^0-9]/g, '');
+    return Number(cleaned);
+  }).pipe(z.number().positive('Jumlah harus lebih dari 0')),
   categoryId: z.string().min(1, 'Kategori wajib dipilih'),
   trxDate: z.string().min(1, 'Tanggal wajib diisi'),
   trxNote: z.string().optional(),
@@ -49,7 +53,10 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
     const currentCategoryId = watch('categoryId');
     const isValidCategory = filteredCategories.some(c => c.id === currentCategoryId);
     
-    if (currentCategoryId && !isValidCategory) {
+    if (!isValidCategory && filteredCategories.length > 0) {
+      // Auto select the first available category for convenience
+      setValue('categoryId', filteredCategories[0].id, { shouldValidate: true });
+    } else if (!isValidCategory && filteredCategories.length === 0) {
       setValue('categoryId', '', { shouldValidate: false });
     }
   }, [selectedType, filteredCategories, setValue, watch]);
@@ -217,7 +224,7 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
                       type="button"
                       onClick={() => {
                         setIsCategoryOpen(false);
-                        onOpenCategoryManage();
+                        onOpenCategoryManage(watch('trxType'));
                       }}
                       className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors hover:bg-sage/10 text-primary font-medium"
                     >

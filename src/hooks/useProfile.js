@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '../lib/supabaseClient';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { dbService } from '../services/db';
 import { useAuth } from '../context/AuthContext';
 
 export function useProfile() {
@@ -8,16 +8,22 @@ export function useProfile() {
   return useQuery({
     queryKey: ['profile', user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-        
-      if (error && error.code !== 'PGRST116') throw error; // Ignore not found error if we just created user
-      return data;
+      return await dbService.getProfile(user);
     },
-    enabled: !!user,
+  });
+}
+
+export function useUpdateProfile() {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async (updates) => {
+      return await dbService.updateProfile(user, updates);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile', user?.id] });
+    },
   });
 }
 

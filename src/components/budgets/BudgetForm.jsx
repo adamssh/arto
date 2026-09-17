@@ -10,7 +10,11 @@ import { useCategories } from '../../hooks/useCategories';
 import { useCreateBudget, useUpdateBudget } from '../../hooks/useBudgets';
 
 const budgetSchema = z.object({
-  budgetNominal: z.coerce.number().positive('Jumlah harus lebih dari 0'),
+  budgetNominal: z.union([z.string(), z.number()]).transform(val => {
+    if (typeof val === 'number') return val;
+    const cleaned = val.replace(/[^0-9]/g, '');
+    return Number(cleaned);
+  }).pipe(z.number().positive('Jumlah harus lebih dari 0')),
   categoryId: z.string().min(1, 'Pilih kategori'),
 });
 

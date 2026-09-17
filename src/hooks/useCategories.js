@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '../lib/supabaseClient';
+import { dbService } from '../services/db';
 import { useAuth } from '../context/AuthContext';
 
 export function useCategories() {
@@ -8,16 +8,8 @@ export function useCategories() {
   return useQuery({
     queryKey: ['categories', user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('categories')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-        
-      if (error) throw error;
-      return data;
+      return await dbService.getCategories(user);
     },
-    enabled: !!user,
   });
 }
 
@@ -27,13 +19,7 @@ export function useCreateCategory() {
 
   return useMutation({
     mutationFn: async (newCategory) => {
-      const { data, error } = await supabase
-        .from('categories')
-        .insert([{ ...newCategory, user_id: user.id }])
-        .select();
-        
-      if (error) throw error;
-      return data;
+      return await dbService.createCategory(user, newCategory);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories', user?.id] });
@@ -47,15 +33,7 @@ export function useUpdateCategory() {
 
   return useMutation({
     mutationFn: async ({ id, ...updates }) => {
-      const { data, error } = await supabase
-        .from('categories')
-        .update(updates)
-        .eq('id', id)
-        .eq('user_id', user.id)
-        .select();
-        
-      if (error) throw error;
-      return data;
+      return await dbService.updateCategory(user, id, updates);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories', user?.id] });
@@ -69,14 +47,7 @@ export function useDeleteCategory() {
 
   return useMutation({
     mutationFn: async (id) => {
-      const { error } = await supabase
-        .from('categories')
-        .delete()
-        .eq('id', id)
-        .eq('user_id', user.id);
-        
-      if (error) throw error;
-      return id;
+      return await dbService.deleteCategory(user, id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories', user?.id] });

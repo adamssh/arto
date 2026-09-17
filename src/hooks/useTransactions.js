@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '../lib/supabaseClient';
+import { dbService } from '../services/db';
 import { useAuth } from '../context/AuthContext';
 
 export function useTransactions() {
@@ -8,17 +8,8 @@ export function useTransactions() {
   return useQuery({
     queryKey: ['transactions', user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('transactions')
-        .select('*, category:categories(*)')
-        .eq('user_id', user.id)
-        .order('transaction_date', { ascending: false })
-        .order('created_at', { ascending: false });
-        
-      if (error) throw error;
-      return data;
+      return await dbService.getTransactions(user);
     },
-    enabled: !!user,
   });
 }
 
@@ -28,13 +19,7 @@ export function useCreateTransaction() {
 
   return useMutation({
     mutationFn: async (newTransaction) => {
-      const { data, error } = await supabase
-        .from('transactions')
-        .insert([{ ...newTransaction, user_id: user.id }])
-        .select();
-        
-      if (error) throw error;
-      return data;
+      return await dbService.createTransaction(user, newTransaction);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions', user?.id] });
@@ -48,15 +33,7 @@ export function useUpdateTransaction() {
 
   return useMutation({
     mutationFn: async ({ id, ...updates }) => {
-      const { data, error } = await supabase
-        .from('transactions')
-        .update(updates)
-        .eq('id', id)
-        .eq('user_id', user.id)
-        .select();
-        
-      if (error) throw error;
-      return data;
+      return await dbService.updateTransaction(user, id, updates);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions', user?.id] });
@@ -70,14 +47,7 @@ export function useDeleteTransaction() {
 
   return useMutation({
     mutationFn: async (id) => {
-      const { error } = await supabase
-        .from('transactions')
-        .delete()
-        .eq('id', id)
-        .eq('user_id', user.id);
-        
-      if (error) throw error;
-      return id;
+      return await dbService.deleteTransaction(user, id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions', user?.id] });

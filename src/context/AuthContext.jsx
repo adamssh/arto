@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
+import { syncLocalDataToCloud } from '../services/syncService';
 
 const AuthContext = createContext({});
 
@@ -25,7 +26,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const signUp = async (email, password, fullName) => {
-    return supabase.auth.signUp({
+    const res = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -34,13 +35,21 @@ export function AuthProvider({ children }) {
         },
       },
     });
+    if (res.data?.user) {
+      await syncLocalDataToCloud(res.data.user.id);
+    }
+    return res;
   };
 
   const signIn = async (email, password) => {
-    return supabase.auth.signInWithPassword({
+    const res = await supabase.auth.signInWithPassword({
       email,
       password,
     });
+    if (res.data?.user) {
+      await syncLocalDataToCloud(res.data.user.id);
+    }
+    return res;
   };
 
   const signOut = async () => {

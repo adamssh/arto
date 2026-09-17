@@ -12,7 +12,7 @@ import CategoryForm from '../components/categories/CategoryForm';
 export default function Dashboard() {
   const { summary, transactions, isLoading } = useDashboardSummary();
   const [editingTransaction, setEditingTransaction] = useState(null);
-  const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+  const [categoryModalState, setCategoryModalState] = useState({ isOpen: false, type: 'expense' });
 
   if (isLoading) {
     return <div className="p-6 text-center text-text-secondary">Memuat data dashboard...</div>;
@@ -43,21 +43,21 @@ export default function Dashboard() {
             initialData={editingTransaction} 
             onSuccess={() => setEditingTransaction(null)}
             onCancel={() => setEditingTransaction(null)}
-            onOpenCategoryManage={() => setCategoryModalOpen(true)}
+            onOpenCategoryManage={(currentType) => setCategoryModalState({ isOpen: true, type: currentType })}
           />
         )}
       </Modal>
 
       <Modal
-        isOpen={categoryModalOpen}
-        onClose={() => setCategoryModalOpen(false)}
+        isOpen={categoryModalState.isOpen}
+        onClose={() => setCategoryModalState({ isOpen: false, type: 'expense' })}
         title="Tambah Kategori"
       >
-        {categoryModalOpen && (
+        {categoryModalState.isOpen && (
           <CategoryForm
-            initialData={{ type: editingTransaction?.type || 'expense' }}
-            onSuccess={() => setCategoryModalOpen(false)}
-            onCancel={() => setCategoryModalOpen(false)}
+            initialData={{ type: categoryModalState.type }}
+            onSuccess={() => setCategoryModalState({ isOpen: false, type: 'expense' })}
+            onCancel={() => setCategoryModalState({ isOpen: false, type: 'expense' })}
           />
         )}
       </Modal>

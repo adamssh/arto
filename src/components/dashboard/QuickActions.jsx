@@ -7,7 +7,7 @@ import CategoryForm from '../categories/CategoryForm';
 
 export default function QuickActions() {
   const [modalState, setModalState] = useState({ isOpen: false, type: 'expense' });
-  const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+  const [categoryModalState, setCategoryModalState] = useState({ isOpen: false, type: 'expense' });
 
   const openModal = (type) => setModalState({ isOpen: true, type });
   const closeModal = () => setModalState({ isOpen: false, type: 'expense' });
@@ -41,21 +41,21 @@ export default function QuickActions() {
             initialData={{ type: modalState.type }} 
             onSuccess={closeModal}
             onCancel={closeModal}
-            onOpenCategoryManage={() => setCategoryModalOpen(true)}
+            onOpenCategoryManage={(currentType) => setCategoryModalState({ isOpen: true, type: currentType })}
           />
         )}
       </Modal>
 
       <Modal
-        isOpen={categoryModalOpen}
-        onClose={() => setCategoryModalOpen(false)}
+        isOpen={categoryModalState.isOpen}
+        onClose={() => setCategoryModalState({ isOpen: false, type: 'expense' })}
         title="Tambah Kategori"
       >
-        {categoryModalOpen && (
+        {categoryModalState.isOpen && (
           <CategoryForm
-            initialData={{ type: modalState.type }}
-            onSuccess={() => setCategoryModalOpen(false)}
-            onCancel={() => setCategoryModalOpen(false)}
+            initialData={{ type: categoryModalState.type }}
+            onSuccess={() => setCategoryModalState({ isOpen: false, type: 'expense' })}
+            onCancel={() => setCategoryModalState({ isOpen: false, type: 'expense' })}
           />
         )}
       </Modal>

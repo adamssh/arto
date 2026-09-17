@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '../lib/supabaseClient';
+import { dbService } from '../services/db';
 import { useAuth } from '../context/AuthContext';
 
 export function useBudgets(month, year) {
@@ -11,18 +11,8 @@ export function useBudgets(month, year) {
   return useQuery({
     queryKey: ['budgets', user?.id, currentMonth, currentYear],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('budgets')
-        .select('*, category:categories(*)')
-        .eq('user_id', user.id)
-        .eq('month', currentMonth)
-        .eq('year', currentYear)
-        .order('created_at', { ascending: false });
-        
-      if (error) throw error;
-      return data;
+      return await dbService.getBudgets(user, currentMonth, currentYear);
     },
-    enabled: !!user,
   });
 }
 
@@ -32,32 +22,12 @@ export function useCreateBudget() {
 
   return useMutation({
     mutationFn: async (newBudget) => {
-      // Validate duplicates
-      let query = supabase
-        .from('budgets')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('month', newBudget.month)
-        .eq('year', newBudget.year);
-
-      if (newBudget.category_id) {
-        query = query.eq('category_id', newBudget.category_id);
-      } else {
-        query = query.is('category_id', null);
-      }
-        
-      const { data: existing } = await query;
-      if (existing && existing.length > 0) {
+      const exists = await dbService.checkBudgetExists(user, newBudget.month, newBudget.year, newBudget.category_id);
+      if (exists) {
         throw new Error('Budget untuk kategori ini sudah ada di bulan yang sama');
       }
 
-      const { data, error } = await supabase
-        .from('budgets')
-        .insert([{ ...newBudget, user_id: user.id }])
-        .select();
-        
-      if (error) throw error;
-      return data;
+      return await dbService.createBudget(user, newBudget);
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['budgets', user?.id, variables.month, variables.year] });
@@ -71,37 +41,14 @@ export function useUpdateBudget() {
 
   return useMutation({
     mutationFn: async ({ id, ...updates }) => {
-      // If changing category, check for duplicates
       if (updates.category_id !== undefined) {
-        let query = supabase
-          .from('budgets')
-          .select('id')
-          .eq('user_id', user.id)
-          .eq('month', updates.month)
-          .eq('year', updates.year)
-          .neq('id', id);
-          
-        if (updates.category_id) {
-          query = query.eq('category_id', updates.category_id);
-        } else {
-          query = query.is('category_id', null);
-        }
-          
-        const { data: existing } = await query;
-        if (existing && existing.length > 0) {
+        const exists = await dbService.checkBudgetExists(user, updates.month, updates.year, updates.category_id, id);
+        if (exists) {
           throw new Error('Budget untuk kategori ini sudah ada di bulan yang sama');
         }
       }
 
-      const { data, error } = await supabase
-        .from('budgets')
-        .update(updates)
-        .eq('id', id)
-        .eq('user_id', user.id)
-        .select();
-        
-      if (error) throw error;
-      return data;
+      return await dbService.updateBudget(user, id, updates);
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['budgets', user?.id, variables.month, variables.year] });
@@ -115,14 +62,7 @@ export function useDeleteBudget() {
 
   return useMutation({
     mutationFn: async ({ id }) => {
-      const { error } = await supabase
-        .from('budgets')
-        .delete()
-        .eq('id', id)
-        .eq('user_id', user.id);
-        
-      if (error) throw error;
-      return id;
+      return await dbService.deleteBudget(user, id);
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['budgets', user?.id, variables.month, variables.year] });
