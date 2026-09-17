@@ -24,7 +24,7 @@ const transactionSchema = z.object({
 });
 
 export default function TransactionForm({ initialData, onSuccess, onCancel, onOpenCategoryManage }) {
-  const isEditing = !!initialData;
+  const isEditing = !!initialData?.id;
   const { data: categories = [], isLoading: isLoadingCategories } = useCategories();
   const createMutation = useCreateTransaction();
   const updateMutation = useUpdateTransaction();
