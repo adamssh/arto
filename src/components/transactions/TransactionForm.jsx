@@ -162,12 +162,12 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" autoComplete="off">
-      <div className="flex bg-surface/50 p-1.5 rounded-xl2 mb-1 border border-sage/20">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2" autoComplete="off">
+      <div className="flex bg-surface/50 p-1.5 rounded-xl2 border border-sage/20">
         <button
           type="button"
           onClick={() => setValue('trxType', 'income')}
-          className={`flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all flex items-center justify-center gap-2 ${
+          className={`flex-1 py-1.5 text-sm font-semibold rounded-xl transition-all flex items-center justify-center gap-2 ${
             selectedType === 'income' ? 'bg-income text-white shadow-md' : 'text-text-secondary hover:bg-surface/80 hover:text-text-primary'
           }`}
         >
@@ -177,7 +177,7 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
         <button
           type="button"
           onClick={() => setValue('trxType', 'expense')}
-          className={`flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all flex items-center justify-center gap-2 ${
+          className={`flex-1 py-1.5 text-sm font-semibold rounded-xl transition-all flex items-center justify-center gap-2 ${
             selectedType === 'expense' ? 'bg-expense text-white shadow-md' : 'text-text-secondary hover:bg-surface/80 hover:text-text-primary'
           }`}
         >
@@ -215,7 +215,7 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
         </div>
       </div>
 
-      <div className="flex flex-col gap-1.5" ref={dropdownRef}>
+      <div className="flex flex-col gap-1" ref={dropdownRef}>
         <label className="text-sm font-medium text-text-primary ml-1">Kategori</label>
         {filteredCategories.length === 0 ? (
            <p className="text-sm text-expense mt-1">Belum ada kategori untuk tipe ini.</p>
@@ -223,7 +223,7 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
           <div className="relative">
             <input type="hidden" {...register('categoryId')} />
             <div 
-              className="w-full bg-surface/50 border border-sage/30 rounded-xl2 px-4 py-3 flex items-center justify-between cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all select-none"
+              className="w-full bg-surface/50 border border-sage/30 rounded-xl px-4 py-2.5 flex items-center justify-between cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all select-none"
               onClick={() => setIsCategoryOpen(!isCategoryOpen)}
             >
               <div className="flex items-center gap-3">
@@ -233,13 +233,13 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
                     return (
                       <>
                         <CategoryIcon colorString={selectedCategory.color} size="sm" />
-                        <span className="text-text-primary font-medium">{selectedCategory.name}</span>
+                        <span className="text-text-primary text-sm font-medium">{selectedCategory.name}</span>
                       </>
                     );
                   }
-                  return <span className="text-text-secondary">Pilih Kategori</span>;
+                  return <span className="text-text-secondary text-sm">Pilih Kategori</span>;
                 })() : (
-                  <span className="text-text-secondary">Pilih Kategori</span>
+                  <span className="text-text-secondary text-sm">Pilih Kategori</span>
                 )}
               </div>
               <ChevronDown size={18} className={`text-text-secondary transition-transform ${isCategoryOpen ? 'rotate-180' : ''}`} />
@@ -255,12 +255,12 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
                       setValue('categoryId', c.id, { shouldValidate: true });
                       setIsCategoryOpen(false);
                     }}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
+                    className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-xl transition-colors ${
                       watch('categoryId') === c.id ? 'bg-primary/5 text-primary' : 'hover:bg-surface/80 text-text-primary'
                     }`}
                   >
-                    <CategoryIcon colorString={c.color} size="sm" />
-                    <span className="font-medium">{c.name}</span>
+                    <CategoryIcon colorString={c.color} size="xs" />
+                    <span className="font-medium text-xs">{c.name}</span>
                   </button>
                 ))}
                 
@@ -272,10 +272,10 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
                         setIsCategoryOpen(false);
                         onOpenCategoryManage(watch('trxType'));
                       }}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors hover:bg-sage/10 text-primary font-medium"
+                      className="w-full flex items-center gap-2 px-3 py-1.5 rounded-xl transition-colors hover:bg-sage/10 text-primary font-medium"
                     >
-                      <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <div className="w-5 h-5 rounded-md bg-primary/10 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M5 12h14"/><path d="M12 5v14"/>
                         </svg>
                       </div>
@@ -291,12 +291,12 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
       </div>
 
       
-      <div className="flex flex-col gap-1.5" ref={pmDropdownRef}>
+      <div className="flex flex-col gap-1" ref={pmDropdownRef}>
         <label className="text-sm font-medium text-text-primary ml-1">Metode Pembayaran</label>
         <div className="relative">
           <input type="hidden" {...register('paymentMethodId')} />
           <div 
-            className="w-full bg-surface/50 border border-sage/30 rounded-xl2 px-4 py-3 flex items-center justify-between cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all select-none"
+            className="w-full bg-surface/50 border border-sage/30 rounded-xl px-4 py-2.5 flex items-center justify-between cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all select-none"
             onClick={() => setIsPMOpen(!isPMOpen)}
           >
             <div className="flex items-center gap-3">
@@ -304,12 +304,12 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
                 const selectedPM = paymentMethods.find(p => p.id === watch('paymentMethodId'));
                 return selectedPM ? (
                   <div className="flex items-center gap-2">
-                    <div className={`w-5 h-5 rounded flex-shrink-0 bg-${selectedPM.color || 'sage'}`}></div>
-                    <span className="text-text-primary font-medium">{selectedPM.name}</span>
+                    <div className={`w-5 h-5 rounded-md flex-shrink-0 bg-${selectedPM.color || 'sage'}`}></div>
+                    <span className="text-text-primary text-sm font-medium">{selectedPM.name}</span>
                   </div>
-                ) : <span className="text-text-secondary">Pilih Metode</span>;
+                ) : <span className="text-text-secondary text-sm">Pilih Metode</span>;
               })() : (
-                <span className="text-text-secondary">Pilih Metode</span>
+                <span className="text-text-secondary text-sm">Pilih Metode</span>
               )}
             </div>
             <ChevronDown size={18} className={`text-text-secondary transition-transform ${isPMOpen ? 'rotate-180' : ''}`} />
@@ -325,12 +325,12 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
                     setValue('paymentMethodId', pm.id, { shouldValidate: true });
                     setIsPMOpen(false);
                   }}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
+                  className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-xl transition-colors ${
                     watch('paymentMethodId') === pm.id ? 'bg-primary/5 text-primary' : 'hover:bg-surface/80 text-text-primary'
                   }`}
                 >
-                  <div className={`w-5 h-5 rounded flex-shrink-0 bg-${pm.color || 'sage'}`}></div>
-                  <span className="font-medium">{pm.name}</span>
+                  <div className={`w-5 h-5 rounded-md flex-shrink-0 bg-${pm.color || 'sage'}`}></div>
+                  <span className="font-medium text-xs">{pm.name}</span>
                 </button>
               ))}
               
@@ -342,10 +342,10 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
                       setIsPMOpen(false);
                       onOpenPaymentMethodManage();
                     }}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors hover:bg-sage/10 text-primary font-medium"
+                    className="w-full flex items-center gap-2 px-3 py-1.5 rounded-xl transition-colors hover:bg-sage/10 text-primary font-medium"
                   >
-                    <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <div className="w-5 h-5 rounded-md bg-primary/10 flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M5 12h14"/><path d="M12 5v14"/>
                       </svg>
                     </div>
@@ -358,7 +358,7 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
         </div>
       </div>
 
-      <div className="flex flex-col gap-1.5 relative">
+      <div className="flex flex-col gap-1 relative">
         <input type="hidden" {...register('trxDate')} />
         <DatePicker
           label="Tanggal"

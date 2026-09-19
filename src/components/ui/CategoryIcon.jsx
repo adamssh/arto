@@ -9,12 +9,14 @@ export default function CategoryIcon({ colorString, size = 'md', className = '' 
 
   // Determine dimensions based on size
   const containerClasses = {
+    xs: 'w-6 h-6 rounded-lg',
     sm: 'w-8 h-8 rounded-xl',
     md: 'w-10 h-10 rounded-xl',
     lg: 'w-12 h-12 rounded-xl2',
   }[size] || 'w-10 h-10 rounded-xl';
 
   const iconSize = {
+    xs: 14,
     sm: 16,
     md: 20,
     lg: 24,

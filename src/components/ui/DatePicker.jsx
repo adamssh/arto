@@ -135,7 +135,7 @@ export default function DatePicker({ value, onChange, label, error, align = 'lef
       <div 
         className={`w-full bg-surface/50 border flex items-center transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20
           ${isOpen ? 'border-primary ring-2 ring-primary/20' : 'border-sage/30 hover:border-primary/50'}
-          ${compact ? 'pl-1.5 pr-2 py-1.5 rounded-xl' : 'pl-2 pr-4 py-2.5 rounded-xl2'}
+          ${compact ? 'pl-1.5 pr-2 py-1.5 rounded-xl' : 'pl-2 pr-4 py-2.5 rounded-xl'}
         `}
       >
         <div className={`flex items-center w-full ${compact ? 'gap-1' : 'gap-1.5'}`}>
@@ -155,7 +155,7 @@ export default function DatePicker({ value, onChange, label, error, align = 'lef
             autoComplete="off"
             data-lpignore="true"
             data-1p-ignore="true"
-            className="w-full bg-transparent font-medium text-text-primary placeholder:text-text-secondary placeholder:font-normal focus:outline-none"
+            className="w-full bg-transparent text-sm font-medium text-text-primary placeholder:text-text-secondary placeholder:font-normal focus:outline-none"
           />
         </div>
       </div>
@@ -196,7 +196,7 @@ export default function DatePicker({ value, onChange, label, error, align = 'lef
                 onChange(format(new Date(), 'yyyy-MM-dd'));
                 setIsOpen(false);
               }}
-              className="text-sm font-medium text-primary hover:underline"
+              className="text-xs font-medium text-primary hover:underline"
             >
               Kembali ke Hari Ini
             </button>
