@@ -255,12 +255,12 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
                       setValue('categoryId', c.id, { shouldValidate: true });
                       setIsCategoryOpen(false);
                     }}
-                    className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-xl transition-colors ${
+                    className={`w-full flex items-center gap-3 px-3 py-1.5 rounded-xl transition-colors ${
                       watch('categoryId') === c.id ? 'bg-primary/5 text-primary' : 'hover:bg-surface/80 text-text-primary'
                     }`}
                   >
-                    <CategoryIcon colorString={c.color} size="xs" />
-                    <span className="font-medium text-xs">{c.name}</span>
+                    <CategoryIcon colorString={c.color} size="sm" />
+                    <span className="font-medium text-sm">{c.name}</span>
                   </button>
                 ))}
                 
@@ -303,10 +303,12 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
               {watch('paymentMethodId') ? (() => {
                 const selectedPM = paymentMethods.find(p => p.id === watch('paymentMethodId'));
                 return selectedPM ? (
-                  <div className="flex items-center gap-2">
-                    <div className={`w-5 h-5 rounded-md flex-shrink-0 bg-${selectedPM.color || 'sage'}`}></div>
+                  <>
+                    <div className="w-8 flex items-center justify-center">
+                      <div className={`w-5 h-5 rounded-md flex-shrink-0 bg-${selectedPM.color || 'sage'}`}></div>
+                    </div>
                     <span className="text-text-primary text-sm font-medium">{selectedPM.name}</span>
-                  </div>
+                  </>
                 ) : <span className="text-text-secondary text-sm">Pilih Metode</span>;
               })() : (
                 <span className="text-text-secondary text-sm">Pilih Metode</span>
@@ -325,12 +327,14 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
                     setValue('paymentMethodId', pm.id, { shouldValidate: true });
                     setIsPMOpen(false);
                   }}
-                  className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-xl transition-colors ${
+                  className={`w-full flex items-center gap-3 px-3 py-1.5 rounded-xl transition-colors ${
                     watch('paymentMethodId') === pm.id ? 'bg-primary/5 text-primary' : 'hover:bg-surface/80 text-text-primary'
                   }`}
                 >
-                  <div className={`w-5 h-5 rounded-md flex-shrink-0 bg-${pm.color || 'sage'}`}></div>
-                  <span className="font-medium text-xs">{pm.name}</span>
+                  <div className="w-8 flex items-center justify-center">
+                    <div className={`w-5 h-5 rounded-md flex-shrink-0 bg-${pm.color || 'sage'}`}></div>
+                  </div>
+                  <span className="font-medium text-sm">{pm.name}</span>
                 </button>
               ))}
               
