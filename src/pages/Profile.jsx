@@ -11,7 +11,7 @@ export default function Profile() {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/login');
+    navigate('/');
   };
 
   const fullName = profile?.full_name || user?.user_metadata?.full_name || 'Guest';

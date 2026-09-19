@@ -56,7 +56,37 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
       const tunaiPM = paymentMethods.find(pm => pm.name.toLowerCase() === 'tunai');
       setValue('paymentMethodId', tunaiPM ? tunaiPM.id : paymentMethods[0].id, { shouldValidate: true });
     }
-  }, [paymentMethods, isEditing, setValue, getValues]);  const selectedType = watch('trxType');
+  }, [paymentMethods, isEditing, setValue, getValues]);  // Auto-select newly created Category
+  const prevCategoryIds = useRef(new Set());
+  useEffect(() => {
+    if (categories.length === 0) return;
+    const currentIds = categories.map(c => c.id);
+    if (prevCategoryIds.current.size > 0) {
+      const newIds = currentIds.filter(id => !prevCategoryIds.current.has(id));
+      if (newIds.length > 0) {
+        setValue('categoryId', newIds[0], { shouldValidate: true });
+        const newCat = categories.find(c => c.id === newIds[0]);
+        if (newCat && newCat.type !== getValues('trxType')) {
+          setValue('trxType', newCat.type);
+        }
+      }
+    }
+    prevCategoryIds.current = new Set(currentIds);
+  }, [categories, setValue, getValues]);
+
+  // Auto-select newly created Payment Method
+  const prevPaymentMethodIds = useRef(new Set());
+  useEffect(() => {
+    if (paymentMethods.length === 0) return;
+    const currentIds = paymentMethods.map(p => p.id);
+    if (prevPaymentMethodIds.current.size > 0) {
+      const newIds = currentIds.filter(id => !prevPaymentMethodIds.current.has(id));
+      if (newIds.length > 0) {
+        setValue('paymentMethodId', newIds[0], { shouldValidate: true });
+      }
+    }
+    prevPaymentMethodIds.current = new Set(currentIds);
+  }, [paymentMethods, setValue]);  const selectedType = watch('trxType');
   const filteredCategories = categories.filter(c => c.type === selectedType);
 
   // Reset category when type changes and current category is invalid
