@@ -11,7 +11,7 @@ export default function Manage() {
         <h1 className="text-2xl font-semibold">Kelola</h1>
       </header>
 
-      <div className="bg-surface/50 p-1.5 rounded-2xl flex gap-1 mb-6 border border-sage/10 shadow-soft">
+      <div className="bg-surface/50 p-1.5 rounded-xl2 flex gap-1 mb-6 border border-sage/10 shadow-soft">
         <button
           onClick={() => setActiveTab('categories')}
           className={`flex-1 py-2.5 text-sm font-semibold rounded-xl transition-all ${

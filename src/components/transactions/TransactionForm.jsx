@@ -20,7 +20,7 @@ const transactionSchema = z.object({
     return Number(cleaned);
   }).pipe(z.number().positive('Jumlah harus lebih dari 0')),
   categoryId: z.string().min(1, 'Kategori wajib dipilih'),
-  paymentMethodId: z.string().optional(),
+  paymentMethodId: z.string().min(1, 'Metode pembayaran wajib dipilih'),
   trxDate: z.string().min(1, 'Tanggal wajib diisi'),
   trxNote: z.string().optional(),
 });
@@ -39,7 +39,7 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
   const dropdownRef = useRef(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
+  const { register, handleSubmit, setValue, watch, getValues, formState: { errors } } = useForm({
     resolver: zodResolver(transactionSchema),
     defaultValues: {
       trxType: initialData?.type || 'expense',
@@ -51,7 +51,12 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
     }
   });
 
-  const selectedType = watch('trxType');
+  useEffect(() => {
+    if (!isEditing && !getValues('paymentMethodId') && paymentMethods.length > 0) {
+      const tunaiPM = paymentMethods.find(pm => pm.name.toLowerCase() === 'tunai');
+      setValue('paymentMethodId', tunaiPM ? tunaiPM.id : paymentMethods[0].id, { shouldValidate: true });
+    }
+  }, [paymentMethods, isEditing, setValue, getValues]);  const selectedType = watch('trxType');
   const filteredCategories = categories.filter(c => c.type === selectedType);
 
   // Reset category when type changes and current category is invalid
@@ -88,7 +93,7 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
         type: data.trxType,
         amount: data.trxNominal,
         category_id: data.categoryId,
-        payment_method_id: data.paymentMethodId || null,
+        payment_method_id: data.paymentMethodId,
         transaction_date: data.trxDate,
         description: data.trxNote
       };
@@ -257,7 +262,7 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
 
       
       <div className="flex flex-col gap-1.5" ref={pmDropdownRef}>
-        <label className="text-sm font-medium text-text-primary ml-1">Metode Pembayaran (opsional)</label>
+        <label className="text-sm font-medium text-text-primary ml-1">Metode Pembayaran</label>
         <div className="relative">
           <input type="hidden" {...register('paymentMethodId')} />
           <div 
@@ -282,18 +287,6 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
 
           {isPMOpen && (
             <div className="absolute top-full left-0 right-0 mt-2 bg-surface rounded-xl2 shadow-[0_8px_30px_rgba(85,117,97,0.12)] border border-sage/10 overflow-hidden z-50 max-h-60 overflow-y-auto p-2 flex flex-col gap-1">
-              <button
-                type="button"
-                onClick={() => {
-                  setValue('paymentMethodId', '', { shouldValidate: true });
-                  setIsPMOpen(false);
-                }}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
-                  !watch('paymentMethodId') ? 'bg-primary/5 text-primary' : 'hover:bg-surface/80 text-text-primary'
-                }`}
-              >
-                <span className="font-medium">- Tidak Ada -</span>
-              </button>
               {paymentMethods.map(pm => (
                 <button
                   key={pm.id}
