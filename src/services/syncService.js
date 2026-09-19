@@ -75,6 +75,7 @@ export const syncLocalDataToCloud = async (userId) => {
             id: pm.id,
             user_id: userId,
             name: pm.name,
+            color: pm.color,
             created_at: pm.created_at || new Date().toISOString()
           });
         }

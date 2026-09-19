@@ -3,6 +3,29 @@ import { format, parseISO } from 'date-fns';
 import { id as idLocale } from 'date-fns/locale';
 import CategoryIcon from '../ui/CategoryIcon';
 
+const HEX_COLORS = {
+  'primary': '#678770',
+  'sage': '#8FA99A',
+  'expense': '#B87568',
+  'pastel-red': '#FFB3BA',
+  'pastel-orange': '#FFDFBA',
+  'pastel-green': '#BAFFC9',
+  'pastel-blue': '#BAE1FF',
+  'pastel-purple': '#D5AAFF',
+  'pastel-pink': '#FFC4E1',
+  'pastel-teal': '#A2E1DB',
+  'pastel-peach': '#FFD3B6',
+  'pastel-lavender': '#E6B3FF',
+};
+
+function hexToRgba(hex, alpha) {
+  if (!hex) return 'transparent';
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 export default function TransactionItem({ transaction, onEdit, onDelete }) {
   const isIncome = transaction.type === 'income';
   
@@ -34,11 +57,19 @@ export default function TransactionItem({ transaction, onEdit, onDelete }) {
         <span className={`font-semibold ${isIncome ? 'text-income' : 'text-expense'}`}>
           {isIncome ? '+' : '-'}{formattedAmount}
         </span>
-        {transaction.payment_method && (
-          <span className="text-[11px] font-medium bg-sage/20 text-text-secondary px-2 py-0.5 rounded-md mt-1 whitespace-nowrap border border-sage/30">
-            {transaction.payment_method.name}
-          </span>
-        )}
+        {transaction.payment_method && (() => {
+          const pmColorName = transaction.payment_method.color || 'sage';
+          const pmHex = HEX_COLORS[pmColorName] || HEX_COLORS.sage;
+          
+          return (
+            <span 
+              className="text-[11px] font-medium text-text-primary/90 px-2 py-0.5 rounded-md mt-1 whitespace-nowrap"
+              style={{ backgroundColor: hexToRgba(pmHex, 0.4) }}
+            >
+              {transaction.payment_method.name}
+            </span>
+          );
+        })()}
       </div>
     </button>
   );

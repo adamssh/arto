@@ -35,9 +35,9 @@ const getDefaultCategories = () => {
 const getDefaultPaymentMethods = () => {
   const now = new Date().toISOString();
   return [
-    { id: uuidv4(), name: 'Tunai', created_at: now },
-    { id: uuidv4(), name: 'Kartu Debit', created_at: now },
-    { id: uuidv4(), name: 'E-Wallet', created_at: now },
+    { id: uuidv4(), name: 'Tunai', color: 'sage', created_at: now },
+    { id: uuidv4(), name: 'Kartu Debit', color: 'pastel-blue', created_at: now },
+    { id: uuidv4(), name: 'E-Wallet', color: 'pastel-green', created_at: now },
   ];
 };
 
@@ -79,6 +79,7 @@ export const dbService = {
       if (data.length === 0) {
         const defaults = getDefaultPaymentMethods().map(m => ({
           name: m.name,
+          color: m.color,
           user_id: user.id
         }));
         const { data: inserted, error: insertError } = await supabase.from('payment_methods').insert(defaults).select('*');

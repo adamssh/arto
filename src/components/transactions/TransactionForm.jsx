@@ -268,7 +268,10 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
               {watch('paymentMethodId') ? (() => {
                 const selectedPM = paymentMethods.find(p => p.id === watch('paymentMethodId'));
                 return selectedPM ? (
-                  <span className="text-text-primary font-medium">{selectedPM.name}</span>
+                  <div className="flex items-center gap-2">
+                    <div className={`w-5 h-5 rounded flex-shrink-0 bg-${selectedPM.color || 'sage'}`}></div>
+                    <span className="text-text-primary font-medium">{selectedPM.name}</span>
+                  </div>
                 ) : <span className="text-text-secondary">Pilih Metode</span>;
               })() : (
                 <span className="text-text-secondary">Pilih Metode</span>
@@ -303,6 +306,7 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
                     watch('paymentMethodId') === pm.id ? 'bg-primary/5 text-primary' : 'hover:bg-surface/80 text-text-primary'
                   }`}
                 >
+                  <div className={`w-5 h-5 rounded flex-shrink-0 bg-${pm.color || 'sage'}`}></div>
                   <span className="font-medium">{pm.name}</span>
                 </button>
               ))}

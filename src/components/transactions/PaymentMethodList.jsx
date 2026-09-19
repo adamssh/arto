@@ -40,6 +40,7 @@ export default function PaymentMethodList() {
           {methods.map(method => (
             <div key={method.id} className="flex items-center justify-between p-3 bg-surface rounded-xl border border-sage/10 shadow-soft">
               <div className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded-lg shrink-0 bg-${method.color || 'sage'}`}></div>
                 <span className="font-medium text-text-primary">{method.name}</span>
               </div>
               <div className="flex items-center -mr-2">

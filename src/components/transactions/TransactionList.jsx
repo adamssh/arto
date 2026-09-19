@@ -4,6 +4,7 @@ import id from 'date-fns/locale/id';
 import { Search, SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import { useTransactions } from '../../hooks/useTransactions';
 import { useCategories } from '../../hooks/useCategories';
+import { usePaymentMethods } from '../../hooks/usePaymentMethods';
 import CategoryIcon from '../ui/CategoryIcon';
 import TransactionItem from './TransactionItem';
 import TransactionForm from './TransactionForm';
@@ -16,16 +17,22 @@ import DatePicker from '../ui/DatePicker';
 export default function TransactionList() {
   const { data: transactions, isLoading } = useTransactions();
   const { data: categories = [] } = useCategories();
+  const { data: paymentMethods = [] } = usePaymentMethods();
 
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const categoryDropdownRef = React.useRef(null);
+  const [isPaymentMethodOpen, setIsPaymentMethodOpen] = useState(false);
+  const paymentMethodDropdownRef = React.useRef(null);
 
   React.useEffect(() => {
     function handleClickOutside(event) {
       if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target)) {
         setIsCategoryOpen(false);
+      }
+      if (paymentMethodDropdownRef.current && !paymentMethodDropdownRef.current.contains(event.target)) {
+        setIsPaymentMethodOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -36,14 +43,15 @@ export default function TransactionList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
-    categoryId: '',
+    categoryIds: [],
+    paymentMethodIds: [],
     startDate: '',
     endDate: '',
     minAmount: '',
     maxAmount: ''
   });
 
-  const activeFilterCount = Object.values(filters).filter(Boolean).length;
+  const activeFilterCount = Object.values(filters).filter(val => Array.isArray(val) ? val.length > 0 : Boolean(val)).length;
 
   const filteredTransactions = useMemo(() => {
     if (!transactions) return [];
@@ -53,24 +61,21 @@ export default function TransactionList() {
         (t.category?.name || '').toLowerCase().includes(searchLower) || 
         (t.description || '').toLowerCase().includes(searchLower);
         
-      const matchCategory = !filters.categoryId || t.category_id === filters.categoryId;
+            const matchCategory = filters.categoryIds.length === 0 || filters.categoryIds.includes(t.category_id);
+      const matchPaymentMethod = filters.paymentMethodIds.length === 0 || filters.paymentMethodIds.includes(t.payment_method_id);
       const matchDateStart = !filters.startDate || t.transaction_date >= filters.startDate;
       const matchDateEnd = !filters.endDate || t.transaction_date <= filters.endDate;
       const matchMinAmount = !filters.minAmount || t.amount >= Number(filters.minAmount);
       const matchMaxAmount = !filters.maxAmount || t.amount <= Number(filters.maxAmount);
       
-      return matchSearch && matchCategory && matchDateStart && matchDateEnd && matchMinAmount && matchMaxAmount;
+      return matchSearch && matchCategory && matchPaymentMethod && matchDateStart && matchDateEnd && matchMinAmount && matchMaxAmount;
     });
   }, [transactions, searchTerm, filters]);
 
-  const handleClearFilters = () => {
-    setFilters({ categoryId: '', startDate: '', endDate: '', minAmount: '', maxAmount: '' });
-  };
+  const handleClearFilters = () => { setFilters({ categoryIds: [], paymentMethodIds: [], startDate: '', endDate: '', minAmount: '', maxAmount: '' }); };
 
   if (isLoading) return <div className="p-4 text-center text-text-secondary">Memuat transaksi...</div>;
-  if (!transactions || transactions.length === 0) {
-    return <div className="p-8 text-center text-text-secondary">Belum ada transaksi.</div>;
-  }
+
 
   // Group by date
   const grouped = filteredTransactions.reduce((acc, curr) => {
@@ -146,20 +151,14 @@ export default function TransactionList() {
                 onClick={() => setIsCategoryOpen(!isCategoryOpen)}
               >
                 <div className="flex items-center gap-2">
-                  {filters.categoryId ? (() => {
-                    const selectedCategory = categories.find(c => c.id === filters.categoryId);
-                    if (selectedCategory) {
-                      return (
-                        <>
-                          <CategoryIcon colorString={selectedCategory.color} size="sm" />
-                          <span className="text-text-primary text-sm font-medium">{selectedCategory.name}</span>
-                        </>
-                      );
+                  {(() => {
+                    if (filters.categoryIds.length === 0) return <span className="text-text-secondary text-sm">Semua Kategori</span>;
+                    if (filters.categoryIds.length === 1) {
+                      const sel = categories.find(c => c.id === filters.categoryIds[0]);
+                      return <span className="text-text-primary text-sm font-medium">{sel ? sel.name : 'Semua Kategori'}</span>;
                     }
-                    return <span className="text-text-secondary text-sm">Semua Kategori</span>;
-                  })() : (
-                    <span className="text-text-secondary text-sm">Semua Kategori</span>
-                  )}
+                    return <span className="text-text-primary text-sm font-medium">{filters.categoryIds.length} Kategori Terpilih</span>;
+                  })()}
                 </div>
                 <ChevronDown size={16} className={`text-text-secondary transition-transform ${isCategoryOpen ? 'rotate-180' : ''}`} />
               </div>
@@ -168,32 +167,103 @@ export default function TransactionList() {
                 <div className="absolute top-full left-0 right-0 mt-2 bg-surface rounded-xl shadow-[0_8px_30px_rgba(85,117,97,0.12)] border border-sage/10 overflow-hidden z-50 max-h-60 overflow-y-auto p-2 flex flex-col gap-1">
                   <button
                     type="button"
-                    onClick={() => {
-                      setFilters({...filters, categoryId: ''});
-                      setIsCategoryOpen(false);
-                    }}
+                    onClick={() => setFilters({...filters, categoryIds: []})}
                     className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-colors ${
-                      !filters.categoryId ? 'bg-primary/5 text-primary' : 'hover:bg-surface/80 text-text-primary'
+                      filters.categoryIds.length === 0 ? 'bg-primary/5 text-primary' : 'hover:bg-surface/80 text-text-primary'
                     }`}
                   >
-                    <span className="font-medium text-sm text-center w-full">Semua Kategori</span>
+                    <div className={`w-4 h-4 rounded border flex items-center justify-center ${filters.categoryIds.length === 0 ? 'bg-primary border-primary text-white' : 'border-sage/30 bg-surface'}`}>
+                      {filters.categoryIds.length === 0 && <svg width="10" height="8" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 9.4L0 5.4L1.4 4L4 6.6L10.6 0L12 1.4L4 9.4Z" fill="currentColor"/></svg>}
+                    </div>
+                    <span className="font-medium text-sm">Semua Kategori</span>
                   </button>
-                  {categories.map(c => (
-                    <button
-                      key={c.id}
-                      type="button"
-                      onClick={() => {
-                        setFilters({...filters, categoryId: c.id});
-                        setIsCategoryOpen(false);
-                      }}
-                      className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl transition-colors ${
-                        filters.categoryId === c.id ? 'bg-primary/5 text-primary' : 'hover:bg-surface/80 text-text-primary'
-                      }`}
-                    >
-                      <CategoryIcon colorString={c.color} size="sm" />
-                      <span className="font-medium text-sm">{c.name}</span>
-                    </button>
-                  ))}
+                  {categories.map(c => {
+                    const isSelected = filters.categoryIds.includes(c.id);
+                    return (
+                      <button
+                        key={c.id}
+                        type="button"
+                        onClick={() => {
+                          const newIds = isSelected 
+                            ? filters.categoryIds.filter(id => id !== c.id) 
+                            : [...filters.categoryIds, c.id];
+                          setFilters({...filters, categoryIds: newIds});
+                        }}
+                        className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl transition-colors ${
+                          isSelected ? 'bg-primary/5 text-primary' : 'hover:bg-surface/80 text-text-primary'
+                        }`}
+                      >
+                        <div className={`w-4 h-4 rounded border flex items-center justify-center ${isSelected ? 'bg-primary border-primary text-white' : 'border-sage/30 bg-surface'}`}>
+                          {isSelected && <svg width="10" height="8" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 9.4L0 5.4L1.4 4L4 6.6L10.6 0L12 1.4L4 9.4Z" fill="currentColor"/></svg>}
+                        </div>
+                        <CategoryIcon colorString={c.color} size="sm" />
+                        <span className="font-medium text-sm">{c.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-medium text-text-secondary ml-1">Metode Pembayaran</label>
+            <div className="relative" ref={paymentMethodDropdownRef}>
+              <div 
+                className="w-full bg-surface border border-sage/30 rounded-xl px-3 py-2 flex items-center justify-between cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all select-none"
+                onClick={() => setIsPaymentMethodOpen(!isPaymentMethodOpen)}
+              >
+                <div className="flex items-center gap-2">
+                  {(() => {
+                    if (filters.paymentMethodIds.length === 0) return <span className="text-text-secondary text-sm">Semua Metode Pembayaran</span>;
+                    if (filters.paymentMethodIds.length === 1) {
+                      const sel = paymentMethods.find(c => c.id === filters.paymentMethodIds[0]);
+                      return <span className="text-text-primary text-sm font-medium">{sel ? sel.name : 'Semua Metode Pembayaran'}</span>;
+                    }
+                    return <span className="text-text-primary text-sm font-medium">{filters.paymentMethodIds.length} Metode Terpilih</span>;
+                  })()}
+                </div>
+                <ChevronDown size={16} className={`text-text-secondary transition-transform ${isPaymentMethodOpen ? 'rotate-180' : ''}`} />
+              </div>
+
+              {isPaymentMethodOpen && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-surface rounded-xl shadow-[0_8px_30px_rgba(85,117,97,0.12)] border border-sage/10 overflow-hidden z-50 max-h-60 overflow-y-auto p-2 flex flex-col gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setFilters({...filters, paymentMethodIds: []})}
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-colors ${
+                      filters.paymentMethodIds.length === 0 ? 'bg-primary/5 text-primary' : 'hover:bg-surface/80 text-text-primary'
+                    }`}
+                  >
+                    <div className={`w-4 h-4 rounded border flex items-center justify-center ${filters.paymentMethodIds.length === 0 ? 'bg-primary border-primary text-white' : 'border-sage/30 bg-surface'}`}>
+                      {filters.paymentMethodIds.length === 0 && <svg width="10" height="8" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 9.4L0 5.4L1.4 4L4 6.6L10.6 0L12 1.4L4 9.4Z" fill="currentColor"/></svg>}
+                    </div>
+                    <span className="font-medium text-sm">Semua Metode Pembayaran</span>
+                  </button>
+                  {paymentMethods.map(pm => {
+                    const isSelected = filters.paymentMethodIds.includes(pm.id);
+                    return (
+                      <button
+                        key={pm.id}
+                        type="button"
+                        onClick={() => {
+                          const newIds = isSelected 
+                            ? filters.paymentMethodIds.filter(id => id !== pm.id) 
+                            : [...filters.paymentMethodIds, pm.id];
+                          setFilters({...filters, paymentMethodIds: newIds});
+                        }}
+                        className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl transition-colors ${
+                          isSelected ? 'bg-primary/5 text-primary' : 'hover:bg-surface/80 text-text-primary'
+                        }`}
+                      >
+                        <div className={`w-4 h-4 rounded border flex items-center justify-center ${isSelected ? 'bg-primary border-primary text-white' : 'border-sage/30 bg-surface'}`}>
+                          {isSelected && <svg width="10" height="8" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 9.4L0 5.4L1.4 4L4 6.6L10.6 0L12 1.4L4 9.4Z" fill="currentColor"/></svg>}
+                        </div>
+                        <div className={`w-5 h-5 rounded flex-shrink-0 bg-${pm.color || 'sage'}`}></div>
+                        <span className="font-medium text-sm">{pm.name}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -253,6 +323,8 @@ export default function TransactionList() {
             Hapus Filter
           </Button>
         </div>
+      ) : dates.length === 0 ? (
+        <div className="py-10 text-center text-text-secondary">Belum ada transaksi.</div>
       ) : (
         dates.map(date => (
           <div key={date} className="mb-3">
