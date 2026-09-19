@@ -9,6 +9,7 @@ import Button from '../ui/Button';
 import CategoryIcon from '../ui/CategoryIcon';
 import DatePicker from '../ui/DatePicker';
 import { useCategories } from '../../hooks/useCategories';
+import { usePaymentMethods } from '../../hooks/usePaymentMethods';
 import { useCreateTransaction, useUpdateTransaction, useDeleteTransaction } from '../../hooks/useTransactions';
 
 const transactionSchema = z.object({
@@ -19,15 +20,19 @@ const transactionSchema = z.object({
     return Number(cleaned);
   }).pipe(z.number().positive('Jumlah harus lebih dari 0')),
   categoryId: z.string().min(1, 'Kategori wajib dipilih'),
+  paymentMethodId: z.string().optional(),
   trxDate: z.string().min(1, 'Tanggal wajib diisi'),
   trxNote: z.string().optional(),
 });
 
-export default function TransactionForm({ initialData, onSuccess, onCancel, onOpenCategoryManage }) {
+export default function TransactionForm({ initialData, onSuccess, onCancel, onOpenCategoryManage, onOpenPaymentMethodManage }) {
   const isEditing = !!initialData?.id;
   const { data: categories = [], isLoading: isLoadingCategories } = useCategories();
   const createMutation = useCreateTransaction();
   const updateMutation = useUpdateTransaction();
+  const { data: paymentMethods = [] } = usePaymentMethods();
+  const [isPMOpen, setIsPMOpen] = useState(false);
+  const pmDropdownRef = useRef(null);
   const deleteMutation = useDeleteTransaction();
   
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
@@ -40,6 +45,7 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
       trxType: initialData?.type || 'expense',
       trxNominal: initialData?.amount || '',
       categoryId: initialData?.category_id || '',
+      paymentMethodId: initialData?.payment_method_id || '',
       trxDate: initialData?.transaction_date || format(new Date(), 'yyyy-MM-dd'),
       trxNote: initialData?.description || ''
     }
@@ -65,6 +71,10 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        
+      if (pmDropdownRef.current && !pmDropdownRef.current.contains(event.target)) {
+        setIsPMOpen(false);
+      }
         setIsCategoryOpen(false);
       }
     }
@@ -78,6 +88,7 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
         type: data.trxType,
         amount: data.trxNominal,
         category_id: data.categoryId,
+        payment_method_id: data.paymentMethodId || null,
         transaction_date: data.trxDate,
         description: data.trxNote
       };
@@ -242,6 +253,82 @@ export default function TransactionForm({ initialData, onSuccess, onCancel, onOp
           </div>
         )}
         {errors.categoryId && <span className="text-xs text-expense ml-1">{errors.categoryId.message}</span>}
+      </div>
+
+      
+      <div className="flex flex-col gap-1.5" ref={pmDropdownRef}>
+        <label className="text-sm font-medium text-text-primary ml-1">Metode Pembayaran (opsional)</label>
+        <div className="relative">
+          <input type="hidden" {...register('paymentMethodId')} />
+          <div 
+            className="w-full bg-surface/50 border border-sage/30 rounded-xl2 px-4 py-3 flex items-center justify-between cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all select-none"
+            onClick={() => setIsPMOpen(!isPMOpen)}
+          >
+            <div className="flex items-center gap-3">
+              {watch('paymentMethodId') ? (() => {
+                const selectedPM = paymentMethods.find(p => p.id === watch('paymentMethodId'));
+                return selectedPM ? (
+                  <span className="text-text-primary font-medium">{selectedPM.name}</span>
+                ) : <span className="text-text-secondary">Pilih Metode</span>;
+              })() : (
+                <span className="text-text-secondary">Pilih Metode</span>
+              )}
+            </div>
+            <ChevronDown size={18} className={`text-text-secondary transition-transform ${isPMOpen ? 'rotate-180' : ''}`} />
+          </div>
+
+          {isPMOpen && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-surface rounded-xl2 shadow-[0_8px_30px_rgba(85,117,97,0.12)] border border-sage/10 overflow-hidden z-50 max-h-60 overflow-y-auto p-2 flex flex-col gap-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setValue('paymentMethodId', '', { shouldValidate: true });
+                  setIsPMOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
+                  !watch('paymentMethodId') ? 'bg-primary/5 text-primary' : 'hover:bg-surface/80 text-text-primary'
+                }`}
+              >
+                <span className="font-medium">- Tidak Ada -</span>
+              </button>
+              {paymentMethods.map(pm => (
+                <button
+                  key={pm.id}
+                  type="button"
+                  onClick={() => {
+                    setValue('paymentMethodId', pm.id, { shouldValidate: true });
+                    setIsPMOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
+                    watch('paymentMethodId') === pm.id ? 'bg-primary/5 text-primary' : 'hover:bg-surface/80 text-text-primary'
+                  }`}
+                >
+                  <span className="font-medium">{pm.name}</span>
+                </button>
+              ))}
+              
+              {onOpenPaymentMethodManage && (
+                <div className="pt-1 mt-1 border-t border-sage/10">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsPMOpen(false);
+                      onOpenPaymentMethodManage();
+                    }}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors hover:bg-sage/10 text-primary font-medium"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M5 12h14"/><path d="M12 5v14"/>
+                      </svg>
+                    </div>
+                    <span>Tambah Metode Pembayaran</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex flex-col gap-1.5 relative">

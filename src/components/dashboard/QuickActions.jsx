@@ -4,10 +4,12 @@ import Button from '../ui/Button';
 import Modal from '../ui/Modal';
 import TransactionForm from '../transactions/TransactionForm';
 import CategoryForm from '../categories/CategoryForm';
+import PaymentMethodForm from '../transactions/PaymentMethodForm';
 
 export default function QuickActions() {
   const [modalState, setModalState] = useState({ isOpen: false, type: 'expense' });
   const [categoryModalState, setCategoryModalState] = useState({ isOpen: false, type: 'expense' });
+  const [isPaymentMethodModalOpen, setIsPaymentMethodModalOpen] = useState(false);
 
   const openModal = (type) => setModalState({ isOpen: true, type });
   const closeModal = () => setModalState({ isOpen: false, type: 'expense' });
@@ -42,6 +44,7 @@ export default function QuickActions() {
             onSuccess={closeModal}
             onCancel={closeModal}
             onOpenCategoryManage={(currentType) => setCategoryModalState({ isOpen: true, type: currentType })}
+            onOpenPaymentMethodManage={() => setIsPaymentMethodModalOpen(true)}
           />
         )}
       </Modal>
@@ -56,6 +59,19 @@ export default function QuickActions() {
             initialData={{ type: categoryModalState.type }}
             onSuccess={() => setCategoryModalState({ isOpen: false, type: 'expense' })}
             onCancel={() => setCategoryModalState({ isOpen: false, type: 'expense' })}
+          />
+        )}
+      </Modal>
+
+      <Modal
+        isOpen={isPaymentMethodModalOpen}
+        onClose={() => setIsPaymentMethodModalOpen(false)}
+        title="Tambah Metode Pembayaran"
+      >
+        {isPaymentMethodModalOpen && (
+          <PaymentMethodForm
+            onSuccess={() => setIsPaymentMethodModalOpen(false)}
+            onCancel={() => setIsPaymentMethodModalOpen(false)}
           />
         )}
       </Modal>

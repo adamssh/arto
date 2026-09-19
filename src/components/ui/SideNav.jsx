@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Home, PieChart, WalletCards, Target, User, LogOut } from 'lucide-react';
+import { Home, PieChart, WalletCards, Target, Settings, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 export default function SideNav() {
@@ -18,9 +18,9 @@ export default function SideNav() {
   const navItems = [
     { icon: <Home size={24} />, label: 'Beranda', path: '/' },
     { icon: <Target size={24} />, label: 'Budget', path: '/goals' },
-    { icon: <WalletCards size={24} />, label: 'Transaksi', path: '/transactions' },
+    { icon: <WalletCards size={24} />, label: 'Riwayat', path: '/history' },
     { icon: <PieChart size={24} />, label: 'Analisis', path: '/analytics' },
-    { icon: <User size={24} />, label: 'Profil', path: '/profile' },
+    { icon: <Settings size={24} />, label: 'Kelola', path: '/manage' },
   ];
 
   return (

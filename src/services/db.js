@@ -3,22 +3,19 @@ import { supabase } from '../lib/supabaseClient';
 import { v4 as uuidv4 } from 'uuid';
 
 const DB_NAME = 'arto_offline_db';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 export const initDB = async () => {
   return openDB(DB_NAME, DB_VERSION, {
-    upgrade(db) {
-      if (!db.objectStoreNames.contains('categories')) {
-        db.createObjectStore('categories', { keyPath: 'id' });
+    upgrade(db, oldVersion) {
+      if (oldVersion < 1) {
+        if (!db.objectStoreNames.contains('categories')) db.createObjectStore('categories', { keyPath: 'id' });
+        if (!db.objectStoreNames.contains('transactions')) db.createObjectStore('transactions', { keyPath: 'id' });
+        if (!db.objectStoreNames.contains('budgets')) db.createObjectStore('budgets', { keyPath: 'id' });
+        if (!db.objectStoreNames.contains('profiles')) db.createObjectStore('profiles', { keyPath: 'id' });
       }
-      if (!db.objectStoreNames.contains('transactions')) {
-        db.createObjectStore('transactions', { keyPath: 'id' });
-      }
-      if (!db.objectStoreNames.contains('budgets')) {
-        db.createObjectStore('budgets', { keyPath: 'id' });
-      }
-      if (!db.objectStoreNames.contains('profiles')) {
-        db.createObjectStore('profiles', { keyPath: 'id' });
+      if (oldVersion < 2) {
+        if (!db.objectStoreNames.contains('payment_methods')) db.createObjectStore('payment_methods', { keyPath: 'id' });
       }
     },
   });
@@ -32,6 +29,15 @@ const getDefaultCategories = () => {
     { id: uuidv4(), name: 'Hiburan', type: 'expense', color: 'pastel-purple:Gamepad2', created_at: now },
     { id: uuidv4(), name: 'Gaji', type: 'income', color: 'pastel-green:Banknote', created_at: now },
     { id: uuidv4(), name: 'Lainnya', type: 'expense', color: 'sage:ShoppingBag', created_at: now },
+  ];
+};
+
+const getDefaultPaymentMethods = () => {
+  const now = new Date().toISOString();
+  return [
+    { id: uuidv4(), name: 'Tunai', created_at: now },
+    { id: uuidv4(), name: 'Kartu Debit', created_at: now },
+    { id: uuidv4(), name: 'E-Wallet', created_at: now },
   ];
 };
 
@@ -63,12 +69,96 @@ export const dbService = {
     }
   },
 
+  // Payment Methods
+
+  getPaymentMethods: async (user) => {
+    if (user) {
+      const { data, error } = await supabase.from('payment_methods').select('*').eq('user_id', user.id).order('created_at', { ascending: false });
+      if (error) throw error;
+      
+      if (data.length === 0) {
+        const defaults = getDefaultPaymentMethods().map(m => ({
+          name: m.name,
+          user_id: user.id
+        }));
+        const { data: inserted, error: insertError } = await supabase.from('payment_methods').insert(defaults).select('*');
+        if (insertError) throw insertError;
+        return inserted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      }
+      
+      return data;
+
+    } else {
+      const db = await initDB();
+      let methods = await db.getAll('payment_methods');
+      if (methods.length === 0) {
+        methods = getDefaultPaymentMethods();
+        for (const method of methods) {
+          await db.put('payment_methods', method);
+        }
+      }
+      return methods.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    }
+  },
+  createPaymentMethod: async (user, data) => {
+    if (user) {
+      const { data: res, error } = await supabase.from('payment_methods').insert([{ ...data, user_id: user.id }]).select();
+      if (error) throw error;
+      return res;
+    } else {
+      const db = await initDB();
+      const newMethod = { ...data, id: uuidv4(), created_at: new Date().toISOString() };
+      await db.put('payment_methods', newMethod);
+      return [newMethod];
+    }
+  },
+  updatePaymentMethod: async (user, id, updates) => {
+    if (user) {
+      const { data, error } = await supabase.from('payment_methods').update(updates).eq('id', id).eq('user_id', user.id).select();
+      if (error) throw error;
+      return data;
+    } else {
+      const db = await initDB();
+      const method = await db.get('payment_methods', id);
+      if (!method) throw new Error('Payment method not found');
+      const updated = { ...method, ...updates };
+      await db.put('payment_methods', updated);
+      return [updated];
+    }
+  },
+  deletePaymentMethod: async (user, id) => {
+    if (user) {
+      const { error } = await supabase.from('payment_methods').delete().eq('id', id).eq('user_id', user.id);
+      if (error) throw error;
+      return id;
+    } else {
+      const db = await initDB();
+      await db.delete('payment_methods', id);
+      return id;
+    }
+  },
+
   // Categories
+
   getCategories: async (user) => {
     if (user) {
       const { data, error } = await supabase.from('categories').select('*').eq('user_id', user.id).order('created_at', { ascending: false });
       if (error) throw error;
+      
+      if (data.length === 0) {
+        const defaults = getDefaultCategories().map(c => ({
+          name: c.name,
+          type: c.type,
+          color: c.color,
+          user_id: user.id
+        }));
+        const { data: inserted, error: insertError } = await supabase.from('categories').insert(defaults).select('*');
+        if (insertError) throw insertError;
+        return inserted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      }
+      
       return data;
+
     } else {
       const db = await initDB();
       let cats = await db.getAll('categories');
@@ -139,7 +229,7 @@ export const dbService = {
     if (user) {
       const { data, error } = await supabase
         .from('transactions')
-        .select('*, category:categories(*)')
+        .select('*, category:categories(*), payment_method:payment_methods(*)')
         .eq('user_id', user.id)
         .order('transaction_date', { ascending: false })
         .order('created_at', { ascending: false });
@@ -149,9 +239,11 @@ export const dbService = {
       const db = await initDB();
       const txs = await db.getAll('transactions');
       const cats = await db.getAll('categories');
+      const pms = await db.getAll('payment_methods');
       const mapped = txs.map(tx => ({
         ...tx,
-        category: cats.find(c => c.id === tx.category_id) || null
+        category: cats.find(c => c.id === tx.category_id) || null,
+        payment_method: pms.find(pm => pm.id === tx.payment_method_id) || null
       }));
       return mapped.sort((a, b) => {
         const dateA = new Date(a.transaction_date).getTime();

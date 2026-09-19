@@ -30,10 +30,15 @@ export default function TransactionItem({ transaction, onEdit, onDelete }) {
         </div>
       </div>
 
-      <div className="flex items-center">
+      <div className="flex flex-col items-end">
         <span className={`font-semibold ${isIncome ? 'text-income' : 'text-expense'}`}>
           {isIncome ? '+' : '-'}{formattedAmount}
         </span>
+        {transaction.payment_method && (
+          <span className="text-[11px] font-medium bg-sage/20 text-text-secondary px-2 py-0.5 rounded-md mt-1 whitespace-nowrap border border-sage/30">
+            {transaction.payment_method.name}
+          </span>
+        )}
       </div>
     </button>
   );

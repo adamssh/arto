@@ -1,13 +1,13 @@
-import { Home, PieChart, ArrowLeftRight, Target, User } from 'lucide-react';
+import { Home, PieChart, WalletCards, Target, Settings } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
 export default function BottomNav() {
   const navItems = [
     { to: '/', icon: Home, label: 'Beranda' },
     { to: '/goals', icon: Target, label: 'Budget' },
-    { to: '/transactions', icon: ArrowLeftRight, label: 'Transaksi' },
+    { to: '/history', icon: WalletCards, label: 'Riwayat' },
     { to: '/analytics', icon: PieChart, label: 'Analisis' },
-    { to: '/profile', icon: User, label: 'Profil' },
+    { to: '/manage', icon: Settings, label: 'Kelola' },
   ];
 
   return (
