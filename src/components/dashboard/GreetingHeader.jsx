@@ -23,7 +23,7 @@ export default function GreetingHeader() {
         {!user ? (
           <button 
             onClick={() => navigate('/login')}
-            className="bg-transparent border border-text-primary text-text-primary text-xs px-2.5 h-7 flex items-center rounded-lg font-medium hover:bg-text-primary/5 transition-colors"
+            className="bg-transparent border border-text-primary text-text-primary text-xs px-2.5 h-7 flex items-center rounded-lg font-medium mt-0.5 hover:bg-text-primary/5 transition-colors"
           >
             Login / Register
           </button>
