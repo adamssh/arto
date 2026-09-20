@@ -39,6 +39,36 @@ export function useAnalytics() {
     return Object.values(expensesMap).sort((a, b) => b.amount - a.amount);
   };
 
+  const getExpenseByPaymentMethod = (month, year) => {
+    if (!transactions.length) return [];
+
+    const expensesMap = {};
+
+    transactions.forEach(tx => {
+      const txDate = parseISO(tx.transaction_date);
+      if (
+        tx.type === 'expense' && 
+        getMonth(txDate) + 1 === month && 
+        getYear(txDate) === year
+      ) {
+        const pmId = tx.payment_method_id || 'unspecified';
+        if (!expensesMap[pmId]) {
+          const colorName = tx.payment_method?.color || 'sage';
+          expensesMap[pmId] = {
+            id: pmId,
+            methodName: tx.payment_method?.name || 'Tanpa Metode',
+            amount: 0,
+            color: tailwindColors[colorName] || tailwindColors['sage'],
+            rawColor: colorName
+          };
+        }
+        expensesMap[pmId].amount += Number(tx.amount);
+      }
+    });
+
+    return Object.values(expensesMap).sort((a, b) => b.amount - a.amount);
+  };
+
   const getMonthlyTrend = (monthsCount = 6) => {
     if (!transactions.length) return [];
 
@@ -89,6 +119,7 @@ export function useAnalytics() {
 
   return {
     getExpenseByCategory,
+    getExpenseByPaymentMethod,
     getMonthlyTrend,
     getSummary,
     categories,

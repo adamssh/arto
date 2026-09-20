@@ -4,13 +4,16 @@ import PeriodSelector from '../components/analytics/PeriodSelector';
 import SummaryCard from '../components/analytics/SummaryCard';
 import TrendChart from '../components/analytics/TrendChart';
 import ExpensePieChart from '../components/analytics/ExpensePieChart';
+import ExpenseMethodPieChart from '../components/analytics/ExpenseMethodPieChart';
 
 export default function Analytics() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+  const [selectedMethodId, setSelectedMethodId] = useState(null);
   
   const { 
-    getExpenseByCategory, 
+    getExpenseByCategory,
+    getExpenseByPaymentMethod, 
     getMonthlyTrend, 
     getSummary,
     isLoading 
@@ -21,6 +24,7 @@ export default function Analytics() {
 
   const summary = getSummary(month, year);
   const expenseData = getExpenseByCategory(month, year);
+  const methodExpenseData = getExpenseByPaymentMethod(month, year);
   const trendData = getMonthlyTrend(6);
 
   if (isLoading) {
@@ -37,7 +41,8 @@ export default function Analytics() {
         currentDate={currentDate} 
         onChangeDate={(newDate) => {
           setCurrentDate(newDate);
-          setSelectedCategoryId(null); // Reset filter on month change
+          setSelectedCategoryId(null);
+          setSelectedMethodId(null);
         }} 
       />
 
@@ -62,6 +67,15 @@ export default function Analytics() {
             selectedCategoryId={selectedCategoryId} 
             onSelectCategory={setSelectedCategoryId}
           />
+
+          <h3 className="text-lg font-semibold mb-3 text-text-primary mt-6">Pengeluaran per Metode Pembayaran</h3>
+          
+          <ExpenseMethodPieChart 
+            data={methodExpenseData} 
+            selectedMethodId={selectedMethodId} 
+            onSelectMethod={setSelectedMethodId}
+          />
+
         </>
       )}
     </div>
