@@ -76,7 +76,7 @@ export const dbService = {
       const { data, error } = await supabase.from('payment_methods').select('*').eq('user_id', user.id).order('created_at', { ascending: false });
       if (error) throw error;
       
-      if (data.length === 0) {
+      if (data.length === 0 && !window.isSyncing) {
         const defaults = getDefaultPaymentMethods().map(m => ({
           name: m.name,
           color: m.color,
@@ -146,7 +146,7 @@ export const dbService = {
       const { data, error } = await supabase.from('categories').select('*').eq('user_id', user.id).order('created_at', { ascending: false });
       if (error) throw error;
       
-      if (data.length === 0) {
+      if (data.length === 0 && !window.isSyncing) {
         const defaults = getDefaultCategories().map(c => ({
           name: c.name,
           type: c.type,

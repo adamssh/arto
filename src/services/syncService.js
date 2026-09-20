@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabaseClient';
 export const syncLocalDataToCloud = async (userId) => {
   if (!userId) return false;
 
+  window.isSyncing = true;
   const db = await initDB();
 
   // Read all data from IndexedDB
@@ -142,10 +143,12 @@ export const syncLocalDataToCloud = async (userId) => {
       await db.clear('payment_methods');
     }
 
+    window.isSyncing = false;
     return syncSuccessful;
 
   } catch (err) {
     console.error('Sync failed with exception:', err);
+    window.isSyncing = false;
     return false;
   }
 };

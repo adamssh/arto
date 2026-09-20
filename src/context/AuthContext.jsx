@@ -37,6 +37,7 @@ export function AuthProvider({ children }) {
     });
     if (res.data?.user) {
       await syncLocalDataToCloud(res.data.user.id);
+      window.dispatchEvent(new Event('syncComplete'));
     }
     return res;
   };
@@ -48,6 +49,7 @@ export function AuthProvider({ children }) {
     });
     if (res.data?.user) {
       await syncLocalDataToCloud(res.data.user.id);
+      window.dispatchEvent(new Event('syncComplete'));
     }
     return res;
   };
