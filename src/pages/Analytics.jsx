@@ -5,6 +5,7 @@ import SummaryCard from '../components/analytics/SummaryCard';
 import TrendChart from '../components/analytics/TrendChart';
 import ExpensePieChart from '../components/analytics/ExpensePieChart';
 import ExpenseMethodPieChart from '../components/analytics/ExpenseMethodPieChart';
+import AuthProfileButton from '../components/ui/AuthProfileButton';
 
 export default function Analytics() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -33,8 +34,9 @@ export default function Analytics() {
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
-      <header className="mb-6">
-        <h1 className="text-2xl font-semibold">Analisis</h1>
+      <header className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-semibold text-text-primary">Analisis</h1>
+        <AuthProfileButton />
       </header>
 
       <PeriodSelector 

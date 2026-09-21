@@ -5,6 +5,7 @@ import Modal from '../components/ui/Modal';
 import BudgetList from '../components/budgets/BudgetList';
 import BudgetForm from '../components/budgets/BudgetForm';
 import MonthlyBudgetCard from '../components/budgets/MonthlyBudgetCard';
+import AuthProfileButton from '../components/ui/AuthProfileButton';
 
 export default function Goals() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,7 +16,8 @@ export default function Goals() {
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <header className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Budget</h1>
+        <h1 className="text-2xl font-semibold text-text-primary">Budget</h1>
+        <AuthProfileButton />
       </header>
 
       <MonthlyBudgetCard />

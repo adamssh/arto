@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import CategoryList from '../components/categories/CategoryList';
 import PaymentMethodList from '../components/transactions/PaymentMethodList';
+import AuthProfileButton from '../components/ui/AuthProfileButton';
 
 export default function Manage() {
   const [activeTab, setActiveTab] = useState('categories');
@@ -8,7 +9,8 @@ export default function Manage() {
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <header className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Kelola</h1>
+        <h1 className="text-2xl font-semibold text-text-primary">Kelola</h1>
+        <AuthProfileButton />
       </header>
 
       <div className="bg-surface/50 p-1.5 rounded-xl2 flex gap-1 mb-6 border border-sage/10 shadow-soft">
