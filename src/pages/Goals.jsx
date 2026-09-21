@@ -26,7 +26,10 @@ export default function Goals() {
           <p className="text-xs text-text-secondary mb-4">Buat kategori pengeluaran terlebih dahulu di halaman Transaksi.</p>
         </div>
       ) : (
-        <Button onClick={() => setIsModalOpen(true)} className="w-full mb-6">
+        <Button 
+          onClick={() => setIsModalOpen(true)} 
+          className="w-full mb-6 bg-gradient-to-br from-[#6f937e] to-[#537260] text-white border-0 shadow-soft hover:opacity-90 transition-opacity rounded-xl2"
+        >
           + Tambah Budget Kategori
         </Button>
       )}

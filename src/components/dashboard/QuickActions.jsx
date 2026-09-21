@@ -19,14 +19,14 @@ export default function QuickActions() {
       <div className="flex gap-3 mb-6">
         <Button 
           onClick={() => openModal('income')} 
-          className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-br from-primary to-primary-dark text-white border-0 shadow-soft hover:opacity-90 transition-opacity"
+          className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-br from-[#6f937e] to-[#537260] text-white border-0 shadow-soft hover:opacity-90 transition-opacity rounded-xl2"
         >
           <PlusCircle size={18} />
           <span className="text-sm font-medium">Pemasukan</span>
         </Button>
         <Button 
           onClick={() => openModal('expense')} 
-          className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-br from-primary to-primary-dark text-white border-0 shadow-soft hover:opacity-90 transition-opacity"
+          className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-br from-[#6f937e] to-[#537260] text-white border-0 shadow-soft hover:opacity-90 transition-opacity rounded-xl2"
         >
           <MinusCircle size={18} />
           <span className="text-sm font-medium">Pengeluaran</span>
