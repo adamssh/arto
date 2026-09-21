@@ -25,10 +25,7 @@ export default function ExpenseSummaryCard({ weeklyExpense, dailyExpense, averag
   };
 
   return (
-    <div className="mb-6 bg-gradient-to-br from-primary to-primary-dark text-surface rounded-xl2 p-6 shadow-soft overflow-hidden relative">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10" />
-      <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full blur-xl -ml-8 -mb-8" />
-      
+    <div className="mb-6 bg-gradient-to-br from-[#688c76] to-[#425b4b] text-surface rounded-xl2 p-6 shadow-soft overflow-hidden relative">
       <div className="relative z-10 flex flex-col gap-6">
         <div>
           <div className="flex items-center gap-1.5 mb-1">

@@ -78,10 +78,7 @@ export default function MonthlyBudgetCard() {
 
   return (
     <>
-      <div className="bg-gradient-to-br from-primary to-primary-dark text-surface rounded-xl2 p-6 shadow-soft relative overflow-hidden mb-6 group">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10" />
-        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full blur-xl -ml-8 -mb-8" />
-        
+      <div className="bg-gradient-to-br from-[#688c76] to-[#425b4b] text-surface rounded-xl2 p-6 shadow-soft relative overflow-hidden mb-6 group">
         <div className="relative z-10 flex justify-between items-start mb-6">
           <div>
             <h2 className="text-surface/80 text-sm font-medium uppercase tracking-wide mb-1">

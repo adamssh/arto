@@ -16,10 +16,7 @@ export default function SummaryCard({ income, expense, month, year }) {
   const averageDailyExpense = expense / daysToDivide;
 
   return (
-    <div className="bg-gradient-to-br from-primary to-primary-dark text-surface rounded-2xl p-6 shadow-soft mb-5 relative overflow-hidden group">
-      <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10 transition-transform duration-700 group-hover:scale-110" />
-      <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -ml-10 -mb-10 transition-transform duration-700 group-hover:scale-110" />
-      
+    <div className="bg-gradient-to-br from-[#688c76] to-[#425b4b] text-surface rounded-2xl p-6 shadow-soft mb-5 relative overflow-hidden group">
       <div className="relative z-10 flex flex-col gap-6">
         <div>
           <div className="flex items-center gap-2 mb-2">
