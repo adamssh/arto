@@ -22,23 +22,11 @@ export const initDB = async () => {
 };
 
 const getDefaultCategories = () => {
-  const now = new Date().toISOString();
-  return [
-    { id: uuidv4(), name: 'Makan & Minum', type: 'expense', color: 'pastel-orange:Utensils', created_at: now },
-    { id: uuidv4(), name: 'Transportasi', type: 'expense', color: 'pastel-blue:Car', created_at: now },
-    { id: uuidv4(), name: 'Hiburan', type: 'expense', color: 'pastel-purple:Gamepad2', created_at: now },
-    { id: uuidv4(), name: 'Gaji', type: 'income', color: 'pastel-green:Banknote', created_at: now },
-    { id: uuidv4(), name: 'Lainnya', type: 'expense', color: 'sage:ShoppingBag', created_at: now },
-  ];
+  return [];
 };
 
 const getDefaultPaymentMethods = () => {
-  const now = new Date().toISOString();
-  return [
-    { id: uuidv4(), name: 'Tunai', color: 'sage', created_at: now },
-    { id: uuidv4(), name: 'Kartu Debit', color: 'pastel-blue', created_at: now },
-    { id: uuidv4(), name: 'E-Wallet', color: 'pastel-green', created_at: now },
-  ];
+  return [];
 };
 
 export const dbService = {
